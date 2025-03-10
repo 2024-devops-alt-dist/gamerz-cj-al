@@ -1,0 +1,138 @@
+@startuml
+
+' 1. Inscription d'un utilisateur
+actor Visiteur
+actor Utilisateur
+actor Administrateur
+participant Frontend
+participant API
+participant "Base de données"
+Visiteur -> Frontend : Remplit le formulaire
+Frontend -> API : Envoie les données d'inscription
+API -> "Base de données" : Vérifie si l'email existe déjà
+"Base de données" -> API : Retourne le résultat
+API -> "Base de données" : Enregistre le nouvel utilisateur
+API -> Frontend : Retourne confirmation
+Frontend -> Visiteur : Affiche message de succès
+
+@enduml
+
+@startuml
+
+' 2. Connexion d'un utilisateur
+actor Visiteur
+actor Utilisateur
+actor Administrateur
+participant Frontend
+participant API
+participant "Base de données"
+Visiteur -> Frontend : Entre email et mot de passe
+Frontend -> API : Envoie les identifiants
+API -> "Base de données" : Vérifie l'utilisateur
+"Base de données" -> API : Retourne les infos
+API -> Frontend : Retourne le jeton d'authentification
+Frontend -> Visiteur : Redirige vers l'accueil
+
+@enduml
+
+@startuml
+
+' 3. Un utilisateur consulte les salons
+actor Utilisateur
+actor Administrateur
+participant Frontend
+participant API
+participant "Base de données"
+Utilisateur -> Frontend : Demande la liste des salons
+Frontend -> API : Requête GET /salons
+API -> "Base de données" : Récupère la liste des salons
+"Base de données" -> API : Retourne la liste
+API -> Frontend : Transmet les salons
+Frontend -> Utilisateur : Affiche la liste des salons
+
+@enduml
+
+@startuml
+
+' 4. Un utilisateur entre dans un salon
+actor Utilisateur
+actor Administrateur
+participant Frontend
+participant API
+participant "Base de données"
+Utilisateur -> Frontend : Clique sur un salon
+Frontend -> API : Requête GET/salons/id
+API -> "Base de données" : Vérifie l'existence du salon
+"Base de données" -> API : Retourne les données
+API -> Frontend : Transmet les infos du salon
+Frontend -> Utilisateur : Charge les messages du salon
+
+@enduml
+
+@startuml
+
+' 5. Un utilisateur envoie un message
+actor Utilisateur
+actor Administrateur
+participant Frontend
+participant API
+participant "Base de données"
+Utilisateur -> Frontend : Tape un message
+Frontend -> API : Envoie le message
+API -> "Base de données" : Enregistre le message
+"Base de données" -> API : Confirme l'enregistrement
+API -> Frontend : Message confirmé
+Frontend -> Utilisateur : Affiche le message dans le chat
+
+@enduml
+
+@startuml
+
+' 6. Un utilisateur recherche un joueur
+actor Utilisateur
+actor Administrateur
+participant Frontend
+participant API
+participant "Base de données"
+Utilisateur -> Frontend : Recherche du joueur dispo
+Frontend -> API : Requête de recherche
+API -> "Base de données" : Recherche les joueurs
+"Base de données" -> API : Retourne les résultats
+API -> Frontend : Envoie la liste des joueurs
+Frontend -> Utilisateur : Affiche les résultats
+
+@enduml
+
+@startuml
+
+' 7. Un administrateur valide une inscription
+actor Administrateur
+actor Utilisateur
+participant Frontend
+participant API
+participant "Base de données"
+Administrateur -> Frontend : Valide une inscription
+Frontend -> API : Envoie la validation
+API -> "Base de données" : Change le statut de l'utilisateur
+"Base de données" -> API : Confirme la mise à jour
+API -> Frontend : Confirme la validation
+Frontend -> Administrateur : Affiche confirmation
+
+@enduml
+
+@startuml
+
+' 8. Un administrateur supprime ou bannit un utilisateur
+actor Administrateur
+actor Utilisateur
+participant Frontend
+participant API
+participant "Base de données"
+Administrateur -> Frontend : Sélectionne un utilisateur
+Frontend -> API : Demande la suppression/bannissement
+API -> "Base de données" : Supprime ou met à jour le statut
+"Base de données" -> API : Confirme l'action
+API -> Frontend : Confirme la suppression/bannissement
+Frontend -> Administrateur : Affiche confirmation
+
+@enduml
