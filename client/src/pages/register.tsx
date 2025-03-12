@@ -1,39 +1,36 @@
-import React, { useState } from "react";
+import React from "react";
 import '../assets/styles/global.css';
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+
+// Schéma validation Zod
+const registerSchema = z.object({
+    pseudo: z.string().min(3, "Le pseudo doit contenir au moins 3 caractères"),
+    email: z.string().email("Email invalide"),
+    password: z.string().min(8, "Le mot de passe doit contenir au moins 8 caractères"),
+    confirmPassword: z.string(),
+    motivationText: z.string().optional(),
+}).refine((data) => data.password === data.confirmPassword, {
+    message: "Les mots de passe ne correspondent pas",
+    path: ["confirmPassword"],
+});
+
+type RegisterFormData = z.infer<typeof registerSchema>;
 
 const RegisterForm: React.FC = () => {
-    const [pseudo, setPseudo] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
-    const [motivationText, setMotivationText] = useState("");
-    const [error, setError] = useState("");
+    const { register, handleSubmit, formState: { errors }, reset, } = useForm<RegisterFormData>({
+        resolver: zodResolver(registerSchema),
+    });
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        
-        if (password !== confirmPassword) {
-            setError("Les mots de passe ne correspondent pas !");
-            return;
-        }
-
-        // Traitement de l'inscription ici
-        console.log({ pseudo, email, password, motivationText });
-        
-        // Réinitialiser les champs après l'inscription réussie
-        setPseudo("");
-        setEmail("");
-        setPassword("");
-        setConfirmPassword("");
-        setMotivationText("");
-        setError("");
+    const onSubmit = (data: RegisterFormData) => {
+        console.log("Inscription réussie :", data);
+        reset(); // Réinitialise les champs après soumission
     };
 
     return (
         <>
-            {error && <div className="alert alert-danger">{error}</div>}
-
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="mb-3 row">
                     <div className="col-sm-6">
                         <label htmlFor="pseudo" className="form-label">Pseudo :</label>
@@ -41,11 +38,10 @@ const RegisterForm: React.FC = () => {
                             type="text"
                             id="pseudo"
                             className="form-control"
-                            value={pseudo}
-                            onChange={(e) => setPseudo(e.target.value)}
+                            {...register("pseudo", { required: true })}
                             placeholder="Entrez votre pseudo"
-                            required
                         />
+                        {errors.pseudo && <p className="text-danger">{errors.pseudo.message}</p>}
                     </div>
                     <div className="col-sm-6">
                         <label htmlFor="email" className="form-label">Email :</label>
@@ -53,11 +49,10 @@ const RegisterForm: React.FC = () => {
                             type="email"
                             id="email"
                             className="form-control"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                            {...register("email", { required: true })}
                             placeholder="Entrez votre email"
-                            required
                         />
+                        {errors.email && <p className="text-danger">{errors.email.message}</p>}
                     </div>
                 </div>
 
@@ -68,11 +63,10 @@ const RegisterForm: React.FC = () => {
                             type="password"
                             id="password"
                             className="form-control"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
+                            {...register("password", { required: true })}
                             placeholder="Entrez votre mot de passe"
-                            required
                         />
+                        {errors.password && <p className="text-danger">{errors.password.message}</p>}
                     </div>
                     <div className="col-sm-6">
                         <label htmlFor="confirmPassword" className="form-label">Confirmation fdp :</label>
@@ -80,11 +74,10 @@ const RegisterForm: React.FC = () => {
                             type="password"
                             id="confirmPassword"
                             className="form-control"
-                            value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            {...register("confirmPassword", { required: true })}
                             placeholder="Confirmez votre mot de passe"
-                            required
                         />
+                        {errors.confirmPassword && <p className="text-danger">{errors.confirmPassword.message}</p>}
                     </div>
                 </div>
 
@@ -93,10 +86,10 @@ const RegisterForm: React.FC = () => {
                     <textarea
                         id="motivationText"
                         className="form-control"
-                        value={motivationText}
-                        onChange={(e) => setMotivationText(e.target.value)}
+                        {...register("motivationText", { required: true })}
                         placeholder="Pourquoi souhaitez-vous rejoindre ?"
                     />
+                    {errors.motivationText && <p className="text-danger">{errors.motivationText.message}</p>}
                 </div>
 
                 <div className="text-center">
