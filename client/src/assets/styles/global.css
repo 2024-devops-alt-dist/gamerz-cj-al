@@ -1,34 +1,52 @@
 :root {
     --primary-color: #181818;
+    --color-light-gray-xxxs: #dbdada;
+    --color-light-gray-xxs: #c7c5c5;
+    --color-light-gray-xs: rgba(255, 255, 255, 0.562);
+    --color-light-gray-s: rgba(255, 255, 255, 0.704);
+    --color-gray-m: rgba(117, 117, 117, 0.65);
+    --color-gray-l: rgba(192, 191, 191, 0.3);
+    --color-gray: rgba(163, 163, 163, 0.144);
+    --color-dark-purple-xs: rgba(94, 50, 177, 0.377);
+    --color-dark-purple-s: rgba(94, 50, 177, 0.25);
+    --color-purple-dark: #6e42c146;
+    --color-purple: #5f32b1;
+    --color-purple-light-xs: #a372fd;
+    --color-purple-light-s: #7704e2;
+    --color-white: #ffffff;
+
+    --font-size-s: 14px; 
+    --font-size-m: 15px;
+    --font-size-xl: 35px;
 }
 
 .form-control {
-    background-color: rgba(255, 255, 255, 0.425);
-    border-color: rgba(163, 163, 163, 0.144);
+    background-color: var(--color-light-gray-s);
+    border-color: var(--color-gray);
 }
 .form-control::placeholder {
     opacity: 0.5;
-    color: rgba(117, 117, 117, 0.65);
-    font-size: 15px; 
+    color: var(--color-gray-m);
+    font-size: var(--font-size-m); 
 }
 .form-control:focus {
-    background-color: rgba(255, 255, 255, 0.562);
-    border-color: rgba(94, 50, 177, 0.377);
-    box-shadow: 0 0 0 .25rem rgba(94, 50, 177, 0.25);
+    background-color: var(--color-light-gray-xs);
+    border-color: var(--color-dark-purple-xs);
+    box-shadow: 0 0 0 .25rem var(--color-dark-purple-s);
 }
 
 a:hover {
-    color: #5f32b1;
+    color: var(--color-purple);
 }
 
 .btn-one {
-    border: 1px solid #5f32b1;
-    color: #5f32b1;
+    border: 1px solid var(--color-purple);
+    color: var(--color-purple);
     border-radius: 15px;
 }
 .btn-one:hover {
-    background-color: #5f32b1;
-    color: white;
+    background-color: var(--color-purple);
+    color: var(--color-white);
 }
 
 

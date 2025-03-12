@@ -4,24 +4,36 @@ import '../assets/styles/global.css';
 import '../assets/styles/login.css';
 import logo from '../assets/pic⁫tures/logo3.png';
 import logoIcon from '../assets/pic⁫tures/loco-icon.png';
+import { z } from 'zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useAuth } from '../context/AuthContext';
+
+// Schéma validation Zod
+const loginSchema = z.object({
+    email: z.string().email("Format Email invalide - ex : jean.marc@gmail.com"),
+    password: z.string().min(8, "Le mot de passe doit contenir au moins 8 caractères")
+});
+
+type LoginFormInputs = z.infer<typeof loginSchema>;
 
 const LoginForm: React.FC = () => {
-    const [email, setEmail] = useState<string>('');
-    const [password, setPassword] = useState<string>('');
-    const [error, setError] = useState<string>('');
+    const { login } = useAuth();
     const [activeTab, setActiveTab] = useState("login");
+
+    // React Hook Form
+    const { register, handleSubmit, formState: { errors } } = useForm<LoginFormInputs>({
+        resolver: zodResolver(loginSchema)
+    });
 
     const handleTabChange = (tab: string) => {
         setActiveTab(tab);
     };
-    
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
 
-        if (!email || !password) {
-        setError('Tous les champs sont requis.');
-        return;
-        }
+    const onSubmit = (data: LoginFormInputs) => {
+        console.log("Données soumises :", data);
+        
+        login(data.email, data.password);
     };
 
     return (
@@ -52,21 +64,18 @@ const LoginForm: React.FC = () => {
                         </ul>
                     </div>
 
-                    {error && <div className="alert alert-danger">{error}</div>}
-
                     {activeTab === "login" && (
-                        <form onSubmit={handleSubmit} className="content-form-login">
+                        <form onSubmit={handleSubmit(onSubmit)} className="content-form-login">
                             <div className="mb-3">
                                 <label htmlFor="email" className="form-label">Email :</label>
                                 <input
                                     type="email"
                                     id="email"
                                     className="form-control"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
+                                    {...register("email", { required: true })}
                                     placeholder="Entrez votre email"
-                                    required
                                 />
+                                {errors.email && <span className="text-danger">{errors.email.message}</span>}
                             </div>
 
                             <div className="mb-4">
@@ -75,14 +84,15 @@ const LoginForm: React.FC = () => {
                                     type="password"
                                     id="password"
                                     className="form-control"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
+                                    {...register("password", { required: true })}
                                     placeholder="Entrez votre mot de passe"
-                                    required
                                 />
+
+                                {errors.password && <span className="text-danger">{errors.password.message}</span>}
+
                                 <div className="text-end mt-1">
-                                <a className="link-forgot-password" href="#">Mot de passe oublié ?</a>
-                            </div>
+                                    <a className="link-forgot-password" href="#">Mot de passe oublié ?</a>
+                                </div>
                             </div>
 
                             <div className="text-center mb-3">
@@ -90,12 +100,13 @@ const LoginForm: React.FC = () => {
                             </div>
                         </form>
                     )}
-
-                    {activeTab === "register" && (
+                    
+                    {activeTab === "register" && <RegisterForm />}
+                    {/* {activeTab === "register" && (
                         <form onSubmit={handleSubmit}>
                             {activeTab === "register" && <RegisterForm />}
                         </form>
-                    )}
+                    )} */}
                 </div>
         </div>
     </div>
