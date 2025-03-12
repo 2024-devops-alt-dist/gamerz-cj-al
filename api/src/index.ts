@@ -1,18 +1,18 @@
-import express, { Request, Response } from 'express';
-import dotenv from 'dotenv';
-import db from './config/db';
-dotenv.config();
+import express, { Application } from 'express';
+import config from './config';
+import logger from './utils/logger';
+import dbConnect from './db/db';
+import userRoutes from './routes/userRoutes';
 
-const app = express();
+const app: Application = express();
+const port = config.port;
 
 app.use(express.json());
 
-app.get('/', (req: Request, res: Response) => {
-  res.send('Hello World from Express with TypeScript!');
-});
+app.use('/api', userRoutes);
 
-app.listen(3000, () => {
-  console.log('Server is running on http://localhost:3000');
-});
+dbConnect();
 
-db();
+app.listen(port, () => {
+  logger.info(`Server is running on port ${port}`);
+});
