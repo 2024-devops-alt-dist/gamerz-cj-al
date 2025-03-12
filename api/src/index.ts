@@ -2,6 +2,8 @@ import express, { Application } from 'express';
 import config from './config';
 import logger from './utils/logger';
 import dbConnect from './db/db';
+import swaggerUi from 'swagger-ui-express';
+import swaggerDocs from './swaggerConfig';
 import userRoutes from './routes/userRoutes';
 
 const app: Application = express();
@@ -9,9 +11,10 @@ const port = config.port;
 
 app.use(express.json());
 
-app.use('/api', userRoutes);
-
 dbConnect();
+
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+app.use('/api', userRoutes);
 
 app.listen(port, () => {
   logger.info(`Server is running on port ${port}`);
