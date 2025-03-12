@@ -9,7 +9,7 @@ const dbConnect = async () => {
       throw new Error('Database url not found');
     }
     await mongoose.connect(uri);
-    logger.info('Database connexion succed');
+    logger.info('Database connexion succeed');
   } catch (error) {
     logger.error('Database connexion failed :', error);
   }
