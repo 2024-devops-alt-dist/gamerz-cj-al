@@ -3,22 +3,22 @@ body {
 }
 
 .nav-pills .nav-link.active {
-    background:  linear-gradient(to right, #a372fd, #7704e2);
+    background:  linear-gradient(to right, var(--color-purple-light-xs), var(--color-purple-light-s));
 }
 
 .nav-link {
-    color : #ffffff;
-    background-color: #6e42c146;
+    color : var(--color-white);
+    background-color: var(--color-purple-dark);
 }
 .nav-link:hover {
-    color: #ffffff;
+    color: var(--color-white);
 }
 
 .link-forgot-password {
     text-decoration: none; 
     color: inherit;
     font-style: italic;
-    font-size: 14px;
+    font-size: var(--font-size-s);
 }
 
 @keyframes fadeInFromLeft {
@@ -33,14 +33,14 @@ body {
 }
 
 .card {
-    background:  linear-gradient(to right, #c7c5c5, #dbdada);
+    background:  linear-gradient(to right, var(--color-light-gray-xxs), var(--color-light-gray-xxxs));
     border-radius: 20px;
-    box-shadow: 0 0 23px rgba(192, 191, 191, 0.3) !important;
+    box-shadow: 0 0 23px var(--color-gray-l) !important;
     animation: fadeInFromLeft 0.8s ease-out;
 }
 
 .card-title {
-    font-size: 35px;
+    font-size: var(--font-size-xl);
 }
 
 /* .content-form-login {
@@ -52,7 +52,7 @@ body {
 }
 
 .test-marge {
-    margin-bottom: 35px;
+    margin-bottom: 35px 0;
     margin-top: 35px;
 }
 
