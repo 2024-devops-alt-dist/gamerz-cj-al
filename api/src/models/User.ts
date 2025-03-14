@@ -1,14 +1,16 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
-interface IUser extends Document {
+export interface IUser extends Document {
 	id?: string;
     username: string;
     email: string;
 	password: string;
     role: ('admin' | 'user')[];
-	registrationRequest: string,
+	description: string,
 	isApproved: boolean;
 	isBanned: boolean;
+	createdAt: Date;
+	updatedAt: Date;
 }
 
 const userSchema = new Schema<IUser>(
@@ -18,9 +20,9 @@ const userSchema = new Schema<IUser>(
 		email: { type: String, required: true, unique: true },
 		password: { type: String, required: true },
 		role: { type: [String], enum: ['admin', 'user'], default: ['user'] },
-		registrationRequest: { type: String },
+		description: { type: String },
 		isApproved: { type: Boolean, default: false },
-		isBanned: { type: Boolean, default: false }
+		isBanned: { type: Boolean, default: false },
 	}, 
 	{ timestamps: true }
 );

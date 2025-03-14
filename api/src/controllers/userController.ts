@@ -29,37 +29,54 @@ export const getUserById = async (req: Request, res: Response): Promise<void> =>
 	}
 };
 
-export const getUserByEmail = async (req: Request, res: Response): Promise<void> => {
-	try {
-		const email: string = req.body.email;
-		const user = await User.findOne({ email: email });
-		if(!user) {
-			res.status(404).json({ status: 404, error: "Not Found" });
-			return;
-		}
-		res.status(200).json(user);
-	} catch (error) {
-		res.status(500).json({ status: 500, error: "Internal Server Error" });
-	}
-};
-
 export const createUser = async (req: Request, res: Response) => {
 	try {
-		const user = {
-			username: req.body.username,
-			email: req.body.email,
-			password: await bcrypt.hash(req.body.password, 10),
-			role: req.body.role,
-			registrationRequest: req.body.registrationRequest,
-			isApproved: req.body.isApproved,
-			isBanned: req.body.isBanned
-		}
+        const user = new User({
+            username: req.body.username,
+            email: req.body.email,
+            password: await bcrypt.hash(req.body.password, 10),
+            role: req.body.role,
+            description: req.body.description,
+            isApproved: req.body.isApproved,
+            isBanned: req.body.isBanned
+        });
 		const createdUser = await User.insertOne(user);            
 		if(!createdUser) {
 			res.status(404).json({ status: 404, error: "Not Found" });
 			return;
 		}
-		res.status(201).json(createdUser);
+        res.status(201).json({
+            username: createdUser.username,
+            email: createdUser.email,
+            role: createdUser.role,
+            description: createdUser.description,
+            isApproved: createdUser.isApproved,
+            isBanned: createdUser.isBanned,
+			createdAt: createdUser.createdAt,
+            updatedAt: createdUser.updatedAt
+        });
+	} catch (error) {
+		res.status(500).json({ status: 500, error: "Internal Server Error" });        
+	}
+};
+
+export const updateUser = async (req: Request, res: Response) => {
+	try {
+		const id: string = req.params.id;
+		const property = req.body.property;
+		const value = req.body.value;		
+		let user = await User.findById(id);
+		if(!user) {
+			res.status(404).json({ status: 404, error: "Not Found" });
+			return;
+		}
+		for(const key in user) {
+			if(key === property) {
+				user.set(key, value);
+			}
+		}
+		await user.save();
+		res.status(204).json();
 	} catch (error) {
 		res.status(500).json({ status: 500, error: "Internal Server Error" });        
 	}
