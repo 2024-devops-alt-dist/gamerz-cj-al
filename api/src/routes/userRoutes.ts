@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createUser, deleteUser, getUserByEmail, getUserById, getUsers } from "../controllers/userController";
+import { createUser, deleteUser, getUserById, getUsers, updateUser } from "../controllers/userController";
 
 const router: Router = Router();
 
@@ -52,27 +52,6 @@ router.get('/users/:id', getUserById);
  *   post:
  *     tags:
  *       - Users
- *     summary: Get user by email.
- *     description: Retrieve user by email.
- *     responses:
- *       200:
- *         description: User found.
- *         content:
- *           application/json:
- *       404:
- *         description: User is not found.
- *       500:
- *         description: Internal Server Error.
- *               
- */
-router.post('/users/email', getUserByEmail);
-
-/**
- * @swagger
- * /api/users:
- *   post:
- *     tags:
- *       - Users
  *     summary: Créer un nouvel utilisateur
  *     description: Cette route permet de créer un nouvel utilisateur.
  *     requestBody:
@@ -86,6 +65,33 @@ router.post('/users/email', getUserByEmail);
  *           application/json:
  */
 router.post('/users', createUser);
+
+/**
+ * @swagger
+ * /api/users:
+ *   patch:
+ *     tags:
+ *       - Users
+ *     summary: Met à jour un utilisateur
+ *     description: Cette route permet de mettre à jour un utilisateur.
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: L'ID de l'utilisateur
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *     responses:
+ *       204:
+ *         description: Utilisateur mis à jour avec succès
+ *         content:
+ *           application/json:
+ */
+router.patch('/users/:id', updateUser);
 
 /**
  * @swagger
