@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { createUser, deleteUser, getUserById, getUsers, updateUser } from "../controllers/userController";
 import auth from "../middlewares/auth";
+import isAdmin from "../middlewares/isAdmin";
 
 
 const router: Router = Router();
@@ -21,7 +22,7 @@ const router: Router = Router();
  *             schema:
  *               type: array
  */
-router.get('/users', auth, getUsers);
+router.get('/users', auth, isAdmin, getUsers);
 
 
 /**
@@ -68,7 +69,7 @@ router.get('/users/:id', auth, getUserById);
  *         content:
  *           application/json:
  */
-router.post('/users', auth, createUser);
+router.post('/users', auth, isAdmin, createUser);
 
 /**
  * @swagger
@@ -118,6 +119,6 @@ router.patch('/users/:id', auth, updateUser);
  *       404:
  *         description: Utilisateur non trouvé
  */
-router.delete('/users/:id', auth, deleteUser);
+router.delete('/users/:id', auth, isAdmin, deleteUser);
 
 export default router;
