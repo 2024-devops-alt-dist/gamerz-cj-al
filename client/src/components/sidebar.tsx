@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Dropdown, Nav } from "react-bootstrap";
 import '../assets/styles/global.css';
 import '../assets/styles/sidebar.css';
@@ -18,15 +18,11 @@ function Sidebar() {
     const [cameraOn, setCameraOn] = useState(true);
     const [microOn, setMicroOn] = useState(true);
     const { logout } = useAuth();
-    const navigate = useNavigate();
     
     const toggleCamera = () => setCameraOn(prevState => !prevState);
     const toggleMicro = () => setMicroOn(prevState => !prevState);
 
-    const handleLogout = async () => {
-        await logout(); 
-        navigate("/login");
-    };
+    
 
     return (
         <div className="sidebar bg-cust text-white p-4 d-flex flex-column vh-100" >
@@ -70,7 +66,7 @@ function Sidebar() {
 
                     <Dropdown.Menu>
                         <Dropdown.Item as={Link} to="/profil">Profil</Dropdown.Item>
-                        <Dropdown.Item onClick={handleLogout}>Déconnexion</Dropdown.Item>
+                        <Dropdown.Item onClick={logout}>Déconnexion</Dropdown.Item>
                     </Dropdown.Menu>
                 </Dropdown>
             </div>

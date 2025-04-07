@@ -1,0 +1,18 @@
+.dash-title {
+    color: var(--color-light-gray-s);
+}
+.dash-subTitle {
+    color: var(--color-light-gray-xs);
+}
+
+.table-content table {
+    border-radius: 10px; 
+    overflow: hidden;
+    opacity: 80%;
+}
+
+.table-content th, .table-content td {
+    padding-left: 20px;
+}
+
+
