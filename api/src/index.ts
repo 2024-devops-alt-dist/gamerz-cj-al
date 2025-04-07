@@ -6,11 +6,13 @@ import swaggerUi from 'swagger-ui-express';
 import swaggerDocs from './swaggerConfig';
 import userRoutes from './routes/userRoutes';
 import authRoutes from './routes/authRoutes';
+import cookieParser from 'cookie-parser';
 
 const app: Application = express();
 const port = config.port;
 
 app.use(express.json());
+app.use(cookieParser())
 
 dbConnect();
 

@@ -8,7 +8,7 @@ import config from "../config";
 function generateToken(user: IUser): string {
     const token = jwt.sign(
         {
-            _id: user.id,
+            _id: user._id,
             username: user.username,
             email: user.email,
             role: user.role,
@@ -17,7 +17,7 @@ function generateToken(user: IUser): string {
         },
         config.secret,
         {
-            expiresIn: "1d",
+            expiresIn: "1h",
         }
     );
     return token;
@@ -37,10 +37,12 @@ export const login = async (req: Request, res: Response) => {
             return;
         }
         const token = generateToken(user);
+        logger.info('User authenticated');
         res.status(200).cookie("token", token, {
             httpOnly: true,
-            secure: true,
-            maxAge: 900000
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            maxAge: 60 * 1000
         }).json({ status: 200, message: "Authenticated" });
     } catch (error) {
         res.status(500).json({ status: 500, error: "Internal Server Error" });
@@ -62,7 +64,7 @@ export const register = async (req: Request, res: Response) => {
             return;
         }
         res.status(201).json({
-            id: createdUser.id,
+            _id: createdUser._id,
             username: createdUser.username,
             email: createdUser.email,
             role: createdUser.role,
@@ -76,3 +78,8 @@ export const register = async (req: Request, res: Response) => {
         res.status(500).json({ status: 500, error: "Internal Server Error" });        
     }
 };
+
+export const logout = async (req: Request, res: Response) => {
+    res.clearCookie('token', { httpOnly: true, sameSite: 'strict', path: '/' });
+    res.status(200).json({ message: 'Logout successful' });
+} 

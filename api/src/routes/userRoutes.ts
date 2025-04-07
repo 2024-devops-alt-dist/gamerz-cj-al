@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { createUser, deleteUser, getUserById, getUsers, updateUser } from "../controllers/userController";
+import auth from "../middlewares/auth";
 
 const router: Router = Router();
 
@@ -19,7 +20,7 @@ const router: Router = Router();
  *             schema:
  *               type: array
  */
-router.get('/users', getUsers);
+router.get('/users', auth, getUsers);
 
 /**
  * @swagger
@@ -44,7 +45,7 @@ router.get('/users', getUsers);
  *       404:
  *         description: Utilisateur non trouvé
  */
-router.get('/users/:id', getUserById);
+router.get('/users/:id', auth, getUserById);
 
 /**
  * @swagger
@@ -64,7 +65,7 @@ router.get('/users/:id', getUserById);
  *         content:
  *           application/json:
  */
-router.post('/users', createUser);
+router.post('/users', auth, createUser);
 
 /**
  * @swagger
@@ -91,7 +92,7 @@ router.post('/users', createUser);
  *         content:
  *           application/json:
  */
-router.patch('/users/:id', updateUser);
+router.patch('/users/:id', auth, updateUser);
 
 /**
  * @swagger
@@ -114,6 +115,6 @@ router.patch('/users/:id', updateUser);
  *       404:
  *         description: Utilisateur non trouvé
  */
-router.delete('/users/:id', deleteUser);
+router.delete('/users/:id', auth, deleteUser);
 
 export default router;
