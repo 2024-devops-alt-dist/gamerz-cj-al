@@ -6,6 +6,7 @@ import swaggerUi from 'swagger-ui-express';
 import swaggerDocs from './swaggerConfig';
 import userRoutes from './routes/userRoutes';
 import authRoutes from './routes/authRoutes';
+import cookieParser from 'cookie-parser';
 import cors from 'cors';
 
 const app: Application = express();
@@ -18,6 +19,7 @@ app.use(cors({
 }));
 
 app.use(express.json());
+app.use(cookieParser())
 
 dbConnect();
 

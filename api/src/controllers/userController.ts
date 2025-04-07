@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import User from "../models/User";
 import bcrypt from "bcrypt";
+import logger from "../utils/logger";
 
 export const getUsers = async (req: Request, res: Response): Promise<void> => {
     try {
@@ -45,17 +46,18 @@ export const createUser = async (req: Request, res: Response) => {
 			res.status(404).json({ status: 404, error: "Not Found" });
 			return;
 		}
-        res.status(201).json({
+		logger.info('User created');
+    res.status(201).json({
 			id: createdUser.id,
-            username: createdUser.username,
-            email: createdUser.email,
-            role: createdUser.role,
-            description: createdUser.description,
-            isApproved: createdUser.isApproved,
-            isBanned: createdUser.isBanned,
+      username: createdUser.username,
+      email: createdUser.email,
+      role: createdUser.role,
+      description: createdUser.description,
+      isApproved: createdUser.isApproved,
+      isBanned: createdUser.isBanned,
 			createdAt: createdUser.createdAt,
-            updatedAt: createdUser.updatedAt
-        });
+      updatedAt: createdUser.updatedAt
+    });
 	} catch (error) {
 		res.status(500).json({ status: 500, error: "Internal Server Error" });        
 	}
@@ -79,6 +81,7 @@ export const updateUser = async (req: Request, res: Response) => {
 			}
 		}
 		await user.save();
+		logger.info('User updated');
 		res.status(204).json();
 	} catch (error) {
 		res.status(500).json({ status: 500, error: "Internal Server Error" });        
@@ -98,6 +101,7 @@ export const deleteUser = async (req: Request, res: Response) => {
 			res.status(400).json({ status: 404, error: "User suppression failed" });
 			return;
 		}
+		logger.info('User deleted.')
 		res.status(204).json();
 	} catch (error) {
 		res.status(500).json({ status: 500, error: "Internal Server Error" });

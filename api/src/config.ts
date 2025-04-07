@@ -27,8 +27,8 @@ const config: Config = {
   dbName: getEnvVar('DB_NAME'),
   dbHost: getEnvVar('DB_HOST'),
   dbCluster: getEnvVar('DB_CLUSTER'),
-  uri: `mongodb+srv://${getEnvVar('DB_USER')}:${getEnvVar('DB_PASSWORD')}@${getEnvVar('DB_HOST')}/${getEnvVar('DB_NAME')}?retryWrites=true&w=majority&appName=${getEnvVar('DB_CLUSTER')}` || 'mongodb://localhost:5000',
-  secret: getEnvVar('JWT_SECRET'),
+  uri: `mongodb+srv://${getEnvVar('DB_USER')}:${getEnvVar('DB_PASSWORD')}@${getEnvVar('DB_HOST')}/${getEnvVar('DB_NAME')}?retryWrites=true&w=majority&appName=${getEnvVar('DB_CLUSTER')}`,
+  secret: getEnvVar('SECRET_KEY'),
   port: process.env.PORT ? parseInt(process.env.PORT) : 3000
 };
 
