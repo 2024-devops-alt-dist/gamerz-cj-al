@@ -47,17 +47,17 @@ export const createUser = async (req: Request, res: Response) => {
 			return;
 		}
 		logger.info('User created');
-        res.status(201).json({
+    res.status(201).json({
 			id: createdUser.id,
-            username: createdUser.username,
-            email: createdUser.email,
-            role: createdUser.role,
-            description: createdUser.description,
-            isApproved: createdUser.isApproved,
-            isBanned: createdUser.isBanned,
+      username: createdUser.username,
+      email: createdUser.email,
+      role: createdUser.role,
+      description: createdUser.description,
+      isApproved: createdUser.isApproved,
+      isBanned: createdUser.isBanned,
 			createdAt: createdUser.createdAt,
-            updatedAt: createdUser.updatedAt
-        });
+      updatedAt: createdUser.updatedAt
+    });
 	} catch (error) {
 		res.status(500).json({ status: 500, error: "Internal Server Error" });        
 	}

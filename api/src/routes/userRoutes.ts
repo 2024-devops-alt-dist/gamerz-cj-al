@@ -2,6 +2,7 @@ import { Router } from "express";
 import { createUser, deleteUser, getUserById, getUsers, updateUser } from "../controllers/userController";
 import auth from "../middlewares/auth";
 
+
 const router: Router = Router();
 
 /**
@@ -21,6 +22,7 @@ const router: Router = Router();
  *               type: array
  */
 router.get('/users', auth, getUsers);
+
 
 /**
  * @swagger
@@ -46,6 +48,7 @@ router.get('/users', auth, getUsers);
  *         description: Utilisateur non trouvé
  */
 router.get('/users/:id', auth, getUserById);
+
 
 /**
  * @swagger
