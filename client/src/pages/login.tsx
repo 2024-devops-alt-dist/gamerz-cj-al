@@ -8,11 +8,12 @@ import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 // Schéma validation Zod
 const loginSchema = z.object({
     email: z.string().email("Format Email invalide - ex : jean.marc@gmail.com"),
-    password: z.string().min(8, "Le mot de passe doit contenir au moins 8 caractères")
+    password: z.string().min(2, "Le mot de passe doit contenir au moins 2 caractères")
 });
 
 type LoginFormInputs = z.infer<typeof loginSchema>;
@@ -20,6 +21,7 @@ type LoginFormInputs = z.infer<typeof loginSchema>;
 const LoginForm: React.FC = () => {
     const { login } = useAuth();
     const [activeTab, setActiveTab] = useState("login");
+    const navigate = useNavigate();
 
     // React Hook Form
     const { register, handleSubmit, formState: { errors } } = useForm<LoginFormInputs>({
@@ -30,10 +32,15 @@ const LoginForm: React.FC = () => {
         setActiveTab(tab);
     };
 
-    const onSubmit = (data: LoginFormInputs) => {
+    const onSubmit = async (data: LoginFormInputs) => {
         console.log("Données soumises :", data);
         
-        login(data.email, data.password);
+        try {
+            await login(data.email, data.password);
+            navigate("/home");  
+        } catch (error) {
+            console.error("Erreur lors de la connexion", error);
+        }
     };
 
     return (
