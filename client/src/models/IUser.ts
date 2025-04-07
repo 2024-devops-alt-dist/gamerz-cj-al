@@ -4,7 +4,7 @@ export interface IUser  {
     email : string;
 	password : string;
     role : ('admin' | 'user')[];
-	registrationRequest : string,
+	description : string,
 	isApproved : boolean;
 	isBanned : boolean;
 }
