@@ -1,12 +1,12 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { IUser } from "../models/IUser";
 import { useNavigate } from "react-router-dom";
 
 // Définition du contexte
 interface AuthContextType {
     user: IUser | null;
-    login: (email: string, password: string) =>  Promise<void>;
-    logout: () =>  Promise<void>;
+    login: (email: string, password: string) => Promise<void>;
+    logout: () => Promise<void>;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -14,6 +14,12 @@ export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [user, setUser] = useState<IUser | null>(null);
     const navigate = useNavigate(); 
+
+    // useEffect(() => {
+    //     if (user === null) {
+    //         navigate("/");
+    //     }
+    // }, [user, navigate]);
 
     // const checkAuth = async () => {
     //     try {
@@ -43,10 +49,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             });
     
             if (!response.ok) throw new Error("Échec de la connexion");
-            console.log(response.headers);
+            //console.log(response.headers);
             const data = await response.json();
             console.log("Utilisateur connecté :", data);
-    
+            setUser(data);
         } catch (error) {
             console.error(error);
         }
@@ -56,13 +62,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const logout = async () => {
         try {
             await fetch("http://localhost:3000/api/logout", {
-                method: "POST",
+                method: "GET",
                 credentials: "include"
             });
     
             setUser(null);
             console.log("Déconnecté !");
-            navigate("/login");
+            navigate("/");
         } catch (error) {
             console.error(error);
         }
