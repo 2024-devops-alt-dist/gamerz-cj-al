@@ -1,8 +1,7 @@
-import { NextFunction, Request, RequestHandler, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import config from "../config";
 import User from "../models/User";
-import { log } from "console";
 
 const auth = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -12,8 +11,6 @@ const auth = async (req: Request, res: Response, next: NextFunction) => {
       return;
     }
     const decoded = jwt.verify(token, config.secret) as jwt.JwtPayload;
-    console.log(token);
-    console.log(decoded);
     const user = await User.findOne({
       _id: decoded._id
     })

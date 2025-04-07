@@ -83,3 +83,35 @@ export const logout = async (req: Request, res: Response) => {
     res.clearCookie('token', { httpOnly: true, sameSite: 'strict', path: '/' });
     res.status(200).json({ message: 'Logout successful' });
 };
+
+export const me = async (req: Request, res: Response) => {
+    try {
+        const token = req.cookies.token;
+        if (!token) {
+            res.status(403).json({ message: 'No token, access forbidden' });
+            return;
+        }
+        const decoded = jwt.verify(token, config.secret) as jwt.JwtPayload;
+        const user = await User.findOne({
+            _id: decoded._id
+        })
+        if (!user) {
+            res.status(404).json({ message: 'User not found' });
+            return;
+        }
+        logger.info('Api return authenticated user')
+        res.status(200).json({ 
+            _id: user._id, 
+            usernanme: user.username,
+            email: user.email,
+            role: user.role,
+            description: user.description,
+            isApproved: user.isApproved,
+            isBanned: user.isBanned,
+            createdAt: user.createdAt,
+            updatedAt: user.updatedAt
+        });
+    } catch (error) {
+        res.status(401).json({ message: 'Authentication failed, expired or invalid token' });
+    }
+}
