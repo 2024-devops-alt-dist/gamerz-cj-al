@@ -102,7 +102,7 @@ export const me = async (req: Request, res: Response) => {
         logger.info('Api return authenticated user')
         res.status(200).json({ 
             _id: user._id, 
-            usernanme: user.username,
+            username: user.username,
             email: user.email,
             role: user.role,
             description: user.description,

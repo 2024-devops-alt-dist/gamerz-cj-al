@@ -20,6 +20,7 @@ type LoginFormInputs = z.infer<typeof loginSchema>;
 
 const LoginForm: React.FC = () => {
     const { login } = useAuth();
+    const { checkAuth } = useAuth();
     const [activeTab, setActiveTab] = useState("login");
     const navigate = useNavigate();
 
@@ -37,6 +38,7 @@ const LoginForm: React.FC = () => {
         
         try {
             await login(data.email, data.password);
+            await checkAuth();
             navigate("/home");  
         } catch (error) {
             console.error("Erreur lors de la connexion", error);
