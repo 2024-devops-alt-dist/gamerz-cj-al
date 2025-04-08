@@ -1,27 +1,10 @@
 import { Request, Response } from "express";
-import User, { IUser } from "../models/User";
+import User from "../models/User";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+import jwt, { JsonWebTokenError } from "jsonwebtoken";
 import logger from "../utils/logger";
 import config from "../config";
-
-function generateToken(user: IUser): string {
-    const token = jwt.sign(
-        {
-            _id: user._id,
-            username: user.username,
-            email: user.email,
-            role: user.role,
-            isApproved: user.isApproved,
-            isBanned: user.isBanned
-        },
-        config.secret,
-        {
-            expiresIn: "1h",
-        }
-    );
-    return token;
-}
+import { generateAccessToken, generateRefreshToken } from "../utils/jwt";
 
 export const login = async (req: Request, res: Response) => {
     const email: string = req.body.email;
@@ -36,14 +19,27 @@ export const login = async (req: Request, res: Response) => {
             res.status(400).json({ status: 400, error: "Wrong password" });
             return;
         }
-        const token = generateToken(user);
+        const accessToken = generateAccessToken(user);
+        const refreshToken = generateRefreshToken(user);
+        
+        user.refreshToken = refreshToken;
+        user.save(); 
+
         logger.info('User authenticated');
-        res.status(200).cookie("token", token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "strict",
-            maxAge: 60 * 1000
-        }).json({ status: 200, message: "Authenticated" });
+        res.status(200)
+            .cookie("token", accessToken, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === "production",
+                sameSite: "strict",
+                maxAge: 60 * 60 * 1000
+            })
+            .cookie("refresh_token", refreshToken, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === "production",
+                sameSite: "strict",
+                maxAge: 7 * 24 * 60 * 60 * 1000
+            })
+            .json({ status: 200, message: "Authenticated" });
     } catch (error) {
         res.status(500).json({ status: 500, error: "Internal Server Error" });
     }
@@ -85,33 +81,70 @@ export const logout = async (req: Request, res: Response) => {
 };
 
 export const me = async (req: Request, res: Response) => {
+    const token = req.cookies.token;
+    if (!token) {
+        res.status(403).json({ message: 'No token, access forbidden' });
+        return;
+    }
     try {
-        const token = req.cookies.token;
-        if (!token) {
-            res.status(403).json({ message: 'No token, access forbidden' });
-            return;
-        }
-        const decoded = jwt.verify(token, config.secret) as jwt.JwtPayload;
+        const decoded = jwt.verify(token, config.accessSecret) as jwt.JwtPayload;
         const user = await User.findOne({
             _id: decoded._id
-        })
+        }).select(['-password', '-refreshToken']);
         if (!user) {
             res.status(404).json({ message: 'User not found' });
             return;
         }
         logger.info('Api return authenticated user')
-        res.status(200).json({ 
-            _id: user._id, 
-            username: user.username,
-            email: user.email,
-            role: user.role,
-            description: user.description,
-            isApproved: user.isApproved,
-            isBanned: user.isBanned,
-            createdAt: user.createdAt,
-            updatedAt: user.updatedAt
-        });
+        res.status(200).json(user);
     } catch (error) {
         res.status(401).json({ message: 'Authentication failed, expired or invalid token' });
+    }
+}
+
+export const refreshToken = async (req: Request, res: Response) => {
+    const token = req.cookies.token;
+    const refreshToken = req.cookies.refresh_token;
+    if (!token || !refreshToken) {
+        res.status(403).json({ message: 'Access or refresh token is missing, access forbidden' });
+        return;
+    }
+    try {
+        jwt.verify(token, config.accessSecret);
+    } catch (error) {
+        if(error instanceof JsonWebTokenError) {
+            res.status(401).json({ message: 'Access token is invalid' });
+            return;
+        }
+    }
+    const decoded = jwt.decode(token) as jwt.JwtPayload;
+    const user = await User.findOne({
+        _id: decoded._id
+    });
+    if (!user) {
+        res.status(404).json({ message: 'User not found' });
+        return;
+    }
+    if (!user.refreshToken) {
+        res.status(401).json({ message: 'Refresh token is missing, user have to login' });
+        return;
+    }
+    if (user.refreshToken !== refreshToken) {
+        res.status(401).json({ message: 'Refresh token is invaild' });
+    }
+    try {
+        jwt.verify(user.refreshToken, config.refreshSecret);
+        const newAccessToken = generateAccessToken(user);
+        logger.info('User authenticated');
+        res.status(200)
+            .cookie("token", newAccessToken, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === "production",
+                sameSite: "strict",
+                maxAge: 60 * 60 * 1000
+            })
+            .json({ status: 200, message: "Authenticated, api send back new access token" });
+    } catch (error) {
+        res.status(401).json({ message: 'Refresh token is invalid or expired' });
     }
 }

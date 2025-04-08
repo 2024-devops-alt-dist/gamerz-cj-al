@@ -10,7 +10,7 @@ const isAdmin = async (req: Request, res: Response, next: NextFunction) => {
         return;
     }
     try {
-        const decoded = jwt.verify(token, config.secret) as jwt.JwtPayload;
+        const decoded = jwt.verify(token, config.accessSecret) as jwt.JwtPayload;
         if(!decoded.role.includes('admin')) {
             res.status(403).json({ message: 'Access denied, insufficient role' });
             return;

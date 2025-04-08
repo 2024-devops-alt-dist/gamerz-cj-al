@@ -5,7 +5,7 @@ import logger from "../utils/logger";
 
 export const getUsers = async (req: Request, res: Response): Promise<void> => {
     try {
-		const users = await User.find();
+		const users = await User.find().select(['-password', '-refreshToken']);
 		if(!users) {
 			res.status(404).json({ status: 404, error: "Not Found" });
 			return;
@@ -19,7 +19,7 @@ export const getUsers = async (req: Request, res: Response): Promise<void> => {
 export const getUserById = async (req: Request, res: Response): Promise<void> => {
 	try {
 		const id: string = req.params.id;
-		const user = await User.findById(id);
+		const user = await User.findById(id).select(['-password', '-refreshToken']);
 		if(!user) {
 			res.status(404).json({ status: 404, error: "Not Found" });
 			return;
