@@ -7,6 +7,7 @@ interface AuthContextType {
     user: IUser | null;
     login: (email: string, password: string) => Promise<void>;
     logout: () => Promise<void>;
+    checkAuth: () => any;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -15,28 +16,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const [user, setUser] = useState<IUser | null>(null);
     const navigate = useNavigate(); 
 
-    // useEffect(() => {
-    //     if (user === null) {
-    //         navigate("/");
-    //     }
-    // }, [user, navigate]);
+    useEffect(() => {
+        if (user === null) {
+            navigate("/");
+        }
+    }, [user, navigate]);
 
-    // const checkAuth = async () => {
-    //     try {
-    //         const response = await fetch("http://localhost:3000/api/me", { credentials: "include" });
-
-    //         if (!response.ok) throw new Error("Non authentifié");
-
-    //         const data = await response.json();
-    //         setUser(data); 
-    //     } catch {
-    //         setUser(null);
-    //     }
-    // };
-
-    // useEffect(() => {
-    //     checkAuth(); 
-    // }, []);
 
     // Connexion
     const login = async (email: string, password: string) => {
@@ -49,10 +34,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             });
     
             if (!response.ok) throw new Error("Échec de la connexion");
-            //console.log(response.headers);
             const data = await response.json();
-            console.log("Utilisateur connecté :", data);
-            setUser(data);
+            console.log("Data :", data);
+            
         } catch (error) {
             console.error(error);
         }
@@ -73,9 +57,28 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             console.error(error);
         }
     };
+    
+
+    const checkAuth = async () => {
+        try {
+            const response = await fetch("http://localhost:3000/api/me", { 
+                method: "GET",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include" 
+            });
+            console.log(response);
+            if (!response.ok) throw new Error("Non authentifié");
+    
+            const data = await response.json();
+            setUser(data); 
+            console.log('USER INFO', data);
+        } catch {
+            setUser(null);
+        }
+    };
 
     return (
-        <AuthContext.Provider value={{ user, login, logout }}>
+        <AuthContext.Provider value={{ user, login, logout, checkAuth }}>
             {children}
         </AuthContext.Provider>
     );
