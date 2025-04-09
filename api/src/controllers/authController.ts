@@ -6,7 +6,7 @@ import logger from "../utils/logger";
 import config from "../config";
 import { generateAccessToken, generateRefreshToken } from "../utils/jwt";
 
-export const login = async (req: Request, res: Response) => {
+export const login = async (req: Request, res: Response): Promise<void> => {
     const email: string = req.body.email;
     const password: string = req.body.password;
     try {
@@ -27,7 +27,7 @@ export const login = async (req: Request, res: Response) => {
 
         logger.info('User authenticated');
         res.status(200)
-            .cookie("token", accessToken, {
+            .cookie("access_token", accessToken, {
                 httpOnly: true,
                 secure: process.env.NODE_ENV === "production",
                 sameSite: "strict",
@@ -45,7 +45,7 @@ export const login = async (req: Request, res: Response) => {
     }
 }
 
-export const register = async (req: Request, res: Response) => {
+export const register = async (req: Request, res: Response): Promise<void> => {
     try {
         const user = new User({
             username: req.body.username,
@@ -75,13 +75,15 @@ export const register = async (req: Request, res: Response) => {
     }
 };
 
-export const logout = async (req: Request, res: Response) => {
-    res.clearCookie('token', { httpOnly: true, sameSite: 'strict', path: '/' });
-    res.status(200).json({ message: 'Logout successful' });
+export const logout = async (req: Request, res: Response): Promise<void> => {
+    res.status(200)
+        .clearCookie('token', { httpOnly: true, sameSite: 'strict', path: '/' })
+        .clearCookie('refresh_token', { httpOnly: true, sameSite: 'strict', path: '/' })
+        .json({ message: 'Logout successful' });
 };
 
 export const me = async (req: Request, res: Response) => {
-    const token = req.cookies.token;
+    const token = req.cookies.access_token;
     if (!token) {
         res.status(403).json({ message: 'No token, access forbidden' });
         return;
@@ -102,22 +104,22 @@ export const me = async (req: Request, res: Response) => {
     }
 }
 
-export const refreshToken = async (req: Request, res: Response) => {
-    const token = req.cookies.token;
+export const refreshToken = async (req: Request, res: Response): Promise<void> => {
+    const accessToken = req.cookies.access_token;
     const refreshToken = req.cookies.refresh_token;
-    if (!token || !refreshToken) {
+    if (!accessToken || !refreshToken) {
         res.status(403).json({ message: 'Access or refresh token is missing, access forbidden' });
         return;
     }
     try {
-        jwt.verify(token, config.accessSecret);
+        jwt.verify(accessToken, config.accessSecret);
     } catch (error) {
         if(error instanceof JsonWebTokenError) {
             res.status(401).json({ message: 'Access token is invalid' });
             return;
         }
     }
-    const decoded = jwt.decode(token) as jwt.JwtPayload;
+    const decoded = jwt.decode(accessToken) as jwt.JwtPayload;
     const user = await User.findOne({
         _id: decoded._id
     });
@@ -137,7 +139,7 @@ export const refreshToken = async (req: Request, res: Response) => {
         const newAccessToken = generateAccessToken(user);
         logger.info('User authenticated');
         res.status(200)
-            .cookie("token", newAccessToken, {
+            .cookie("access_token", newAccessToken, {
                 httpOnly: true,
                 secure: process.env.NODE_ENV === "production",
                 sameSite: "strict",

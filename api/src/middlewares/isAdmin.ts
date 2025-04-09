@@ -4,9 +4,9 @@ import config from "../config";
 import logger from "../utils/logger";
 
 const isAdmin = async (req: Request, res: Response, next: NextFunction) => {
-    const token = req.cookies.token;
+    const token = req.cookies.access_token;
     if (!token) {
-        res.status(403).json({ message: 'No token, access forbidden' });
+        res.status(403).json({ message: 'Access token is missing, access forbidden' });
         return;
     }
     try {

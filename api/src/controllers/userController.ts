@@ -30,7 +30,7 @@ export const getUserById = async (req: Request, res: Response): Promise<void> =>
 	}
 };
 
-export const createUser = async (req: Request, res: Response) => {
+export const createUser = async (req: Request, res: Response): Promise<void> => {
 	try {
         const user = new User({
             username: req.body.username,
@@ -63,7 +63,7 @@ export const createUser = async (req: Request, res: Response) => {
 	}
 };
 
-export const updateUser = async (req: Request, res: Response) => {
+export const updateUser = async (req: Request, res: Response): Promise<void> => {
 	try {
 		const id: string = req.params.id;
 		const body = req.body;	
@@ -88,7 +88,7 @@ export const updateUser = async (req: Request, res: Response) => {
 	}
 };
 
-export const deleteUser = async (req: Request, res: Response) => {
+export const deleteUser = async (req: Request, res: Response): Promise<void> => {
 	try {
 		const id: string = req.params.id;
 		const user = await User.findById(id);
