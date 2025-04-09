@@ -1,8 +1,8 @@
 export interface IUser  {
-	id : string;
+	_id : string;
     username : string;
     email : string;
-	password : string;
+	password? : string;
     role : ('admin' | 'user')[];
 	description : string,
 	isApproved : boolean;

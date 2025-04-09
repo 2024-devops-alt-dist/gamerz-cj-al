@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import RegisterForm from './register';
 import '../assets/styles/global.css';
 import '../assets/styles/login.css';
@@ -19,10 +19,19 @@ const loginSchema = z.object({
 type LoginFormInputs = z.infer<typeof loginSchema>;
 
 const LoginForm: React.FC = () => {
+    const { user } = useAuth();
     const { login } = useAuth();
     const { checkAuth } = useAuth();
     const [activeTab, setActiveTab] = useState("login");
     const navigate = useNavigate();
+
+    useEffect(() => {
+        if (user?.role?.includes('admin')) {
+            navigate('/home');
+        } else if (user?.role?.includes('user')) {
+            navigate('/profil');
+        } 
+    }, [user]);
 
     // React Hook Form
     const { register, handleSubmit, formState: { errors } } = useForm<LoginFormInputs>({
@@ -34,12 +43,9 @@ const LoginForm: React.FC = () => {
     };
 
     const onSubmit = async (data: LoginFormInputs) => {
-        console.log("Données soumises :", data);
-        
         try {
             await login(data.email, data.password);
             await checkAuth();
-            navigate("/home");  
         } catch (error) {
             console.error("Erreur lors de la connexion", error);
         }
