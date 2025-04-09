@@ -9,6 +9,7 @@ import Profil from "./pages/profil";
 import Room1 from "./pages/rooms/room1";
 import Room2 from "./pages/rooms/room2";
 import Room3 from "./pages/rooms/room3";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
@@ -35,11 +36,11 @@ function MainContent() {
       <div className="flex-grow-1 p-4">
         <Routes>
           <Route path="/" element={<Login />}/>
-          <Route path="/home" element={<Home />}/>
-          <Route path="/profil" element={<Profil />}/>
-          <Route path="/room1" element={<Room1 />}/>
-          <Route path="/room2" element={<Room2 />}/>
-          <Route path="/room3" element={<Room3 />}/>
+          <Route path="/home" element={<ProtectedRoute requiredRole="admin"><Home /></ProtectedRoute>}/>
+          <Route path="/profil" element={<ProtectedRoute><Profil /></ProtectedRoute>}/>
+          <Route path="/room1" element={<ProtectedRoute><Room1 /></ProtectedRoute>}/>
+          <Route path="/room2" element={<ProtectedRoute><Room2 /></ProtectedRoute>}/>
+          <Route path="/room3" element={<ProtectedRoute><Room3 /></ProtectedRoute>}/>
         </Routes>
       </div>
     </div>

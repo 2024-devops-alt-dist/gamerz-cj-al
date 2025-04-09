@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 // Définition du contexte
 interface AuthContextType {
     user: IUser | null;
+    isLoading: boolean;
     login: (email: string, password: string) => Promise<void>;
     logout: () => Promise<void>;
     checkAuth: () => any;
@@ -15,14 +16,16 @@ export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [user, setUser] = useState<IUser | null>(null);
     const navigate = useNavigate(); 
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        if (user === null) {
-            navigate("/");
-        }
-    }, [user, navigate]);
-
-
+        const init = async () => {
+            await checkAuth();
+            setIsLoading(false);
+        };
+        init();
+    }, []);
+    
     // Connexion
     const login = async (email: string, password: string) => {
         try {
@@ -34,8 +37,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             });
     
             if (!response.ok) throw new Error("Échec de la connexion");
-            const data = await response.json();
-            console.log("Data :", data);
             
         } catch (error) {
             console.error(error);
@@ -66,19 +67,28 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 headers: { "Content-Type": "application/json" },
                 credentials: "include" 
             });
-            console.log(response);
             if (!response.ok) throw new Error("Non authentifié");
-    
+            
             const data = await response.json();
-            setUser(data); 
-            console.log('USER INFO', data);
+            const user = { 
+                _id: data._id, 
+                username: data.username,
+                email: data.email,
+                role: data.role,
+                description: data.description,
+                isApproved: data.isApproved,
+                isBanned: data.isBanned,
+                createdAt: data.createdAt,
+                updatedAt: data.updatedAt
+            }
+            setUser(user);
         } catch {
             setUser(null);
         }
     };
 
     return (
-        <AuthContext.Provider value={{ user, login, logout, checkAuth }}>
+        <AuthContext.Provider value={{ user, isLoading, login, logout, checkAuth }}>
             {children}
         </AuthContext.Provider>
     );
