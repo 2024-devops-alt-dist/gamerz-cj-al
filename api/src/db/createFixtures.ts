@@ -3,6 +3,8 @@ import User from "../models/User";
 import config from "../config";
 import logger from "../utils/logger";
 import bcrypt from "bcrypt";
+import Room from "../models/Room";
+import Message from "../models/Message";
 
 
 async function createFixtures() {
@@ -11,6 +13,7 @@ async function createFixtures() {
         const saltRounds = 10;
         await mongoose.connect(mongoUri);
         await User.deleteMany({});
+        await Room.deleteMany({});
 
         const users = [
             { 
@@ -84,7 +87,23 @@ async function createFixtures() {
             }
         ];
 
+        const rooms = [
+            {
+                name: "Assassin's Creed",
+                description: "Discutez de toute la saga Assassin's Creed, des premiers épisodes emblématiques aux dernières aventures. Partagez vos théories, moments marquants et souvenirs de parkour à travers l’Histoire.",
+            },
+            {
+                name: "The Witcher 3",
+                description: "Un espace pour tous les fans de The Witcher 3 : parlez des choix difficiles, des quêtes épiques, des monstres redoutables et des personnages inoubliables qui ont marqué vos aventures dans le Continent. Retouvez des joueurs avec qui partager ce moment.",
+            },
+            {
+                name: "Minecraft",
+                description: "Rejoignez la communauté des bâtisseurs et aventuriers ! Que vous soyez fan de survie ou de créations monumentales, ce salon est fait pour partager vos mondes et trouver l’inspiration. Retouvez des joueurs avec qui partager ce moment.",
+            },
+        ];
+
         await User.insertMany(users);
+        await Room.insertMany(rooms);
         logger.info('Fixtures successfully inserted');
     } catch (error) {
         logger.error('Error during fixtures insertion', error);
