@@ -49,6 +49,8 @@ router.get('/rooms', getRooms);
  *                   type: string
  *                 name:
  *                   type: string
+ *                 picture:
+ *                   type: string
  *                 description:
  *                   type: string
  *                 createdAt:
@@ -79,10 +81,13 @@ router.get('/rooms/:id', getRoomById);
  *             required:
  *               - name
  *               - description
+ *               - picture
  *             properties:
  *               name:
  *                 type: string
  *               description:
+ *                 type: string
+ *               picture:
  *                 type: string
  *     responses:
  *       201:
@@ -97,6 +102,8 @@ router.get('/rooms/:id', getRoomById);
  *                 name:
  *                   type: string
  *                 description:
+ *                   type: string
+ *                 picture:
  *                   type: string
  *       500:
  *         description: Erreur interne du serveur

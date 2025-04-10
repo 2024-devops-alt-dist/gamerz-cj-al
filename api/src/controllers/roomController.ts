@@ -35,7 +35,8 @@ export const createRoom = async (req: Request, res: Response) => {
     try {
         const room = new Room({
             name: req.body.name,
-            description: req.body.description
+            description: req.body.description,
+			picture: req.body.picture
         });
 
         const createdRoom = await room.save();
@@ -45,7 +46,8 @@ export const createRoom = async (req: Request, res: Response) => {
         res.status(201).json({
             id: createdRoom._id,
             name: createdRoom.name,
-            description: createdRoom.description
+            description: createdRoom.description,
+			picture: createdRoom.picture
         });
     } catch (error) {
         res.status(500).json({ status: 500, error: "Internal Server Error" });

@@ -1,9 +1,10 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
 export interface IRoom extends Document {
-	id: string;
+	id : string;
     name : string;
     description : string;
+    picture : string;
 }
 
 const roomSchema = new Schema<IRoom>(
@@ -11,6 +12,7 @@ const roomSchema = new Schema<IRoom>(
         id: { type: String },
         name: { type: String, required: true },
         description: { type: String },
+        picture: { type: String },
     }, 
     { timestamps: true }
 );
