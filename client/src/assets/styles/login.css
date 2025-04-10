@@ -1,6 +1,8 @@
 body {
     background: linear-gradient(to bottom right, var(--primary-color), #212530);
+    background-attachment: fixed; 
 }
+
 
 .nav-pills .nav-link.active {
     background:  linear-gradient(to right, var(--color-purple-light-xs), var(--color-purple-light-s));

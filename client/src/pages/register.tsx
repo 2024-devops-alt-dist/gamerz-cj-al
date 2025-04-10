@@ -91,7 +91,7 @@ const RegisterForm: React.FC = () => {
                         {errors.password && <p className="text-danger">{errors.password.message}</p>}
                     </div>
                     <div className="col-sm-6">
-                        <label htmlFor="confirmPassword" className="form-label">Confirmation fdp :</label>
+                        <label htmlFor="confirmPassword" className="form-label">Confirmation mdp :</label>
                         <input
                             type="password"
                             id="confirmPassword"

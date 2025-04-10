@@ -23,6 +23,10 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requiredRole 
         return <Navigate to="/profil" replace />;
     }
 
+    if (!user.isApproved && location.pathname.startsWith("/room")) {
+        return <Navigate to="/access-denied" replace />;
+    }
+
     return children;
 };
 
