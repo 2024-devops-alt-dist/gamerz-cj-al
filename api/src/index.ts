@@ -8,6 +8,8 @@ import userRoutes from './routes/userRoutes';
 import authRoutes from './routes/authRoutes';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
+import roomRoutes from './routes/roomRoutes';
+import messageRoutes from './routes/messageRoutes';
 
 const app: Application = express();
 const port = config.port;
@@ -26,6 +28,8 @@ dbConnect();
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 app.use('/api', authRoutes);
 app.use('/api', userRoutes);
+app.use('/api', roomRoutes);
+app.use('/api', messageRoutes);
 
 app.listen(port, () => {
   logger.info(`Server is running on port ${port}`);
