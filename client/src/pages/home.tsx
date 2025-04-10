@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { IUser } from '../models/IUser';
 import Check from '../assets/pic⁫tures/check.png';
 import Close from '../assets/pic⁫tures/close.png';
-import { getUsers, updateUserApproval } from '../services/api';
+import { getUsers, updateUserApproval } from '../api/services/userService';
 
 const Home: React.FC = () => {
     const { user } = useAuth();

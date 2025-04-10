@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { IUser } from "../models/IUser";
 import { useNavigate } from "react-router-dom";
+import { apiLogin, apiLogout, getUserInfo } from "../api/services/authService";
 
 // Définition du contexte
 interface AuthContextType {
@@ -29,14 +30,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Connexion
     const login = async (email: string, password: string) => {
         try {
-            const response = await fetch("http://localhost:3000/api/login", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email, password }),
-                credentials: "include"
-            });
+            const response = await apiLogin(email, password);
     
-            if (!response.ok) throw new Error("Échec de la connexion");
+            if (response.status !== 200) throw new Error("Échec de la connexion");
             
         } catch (error) {
             console.error(error);
@@ -46,10 +42,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Déconnexion
     const logout = async () => {
         try {
-            await fetch("http://localhost:3000/api/logout", {
-                method: "GET",
-                credentials: "include"
-            });
+            await apiLogout();
     
             setUser(null);
             console.log("Déconnecté !");
@@ -62,14 +55,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const checkAuth = async () => {
         try {
-            const response = await fetch("http://localhost:3000/api/me", { 
-                method: "GET",
-                headers: { "Content-Type": "application/json" },
-                credentials: "include" 
-            });
-            if (!response.ok) throw new Error("Non authentifié");
+            const response = await getUserInfo();
+            if (response.status !== 200) throw new Error("Non authentifié");
             
-            const data = await response.json();
+            const data = response.data;
             const user = { 
                 _id: data._id, 
                 username: data.username,
