@@ -91,14 +91,17 @@ async function createFixtures() {
             {
                 name: "Assassin's Creed",
                 description: "Discutez de toute la saga Assassin's Creed, des premiers épisodes emblématiques aux dernières aventures. Partagez vos théories, moments marquants et souvenirs de parkour à travers l’Histoire.",
+                picture : "assassinsCreed.jpeg",
             },
             {
                 name: "The Witcher 3",
                 description: "Un espace pour tous les fans de The Witcher 3 : parlez des choix difficiles, des quêtes épiques, des monstres redoutables et des personnages inoubliables qui ont marqué vos aventures dans le Continent. Retouvez des joueurs avec qui partager ce moment.",
+                picture : "witcher3.jpg",
             },
             {
                 name: "Minecraft",
                 description: "Rejoignez la communauté des bâtisseurs et aventuriers ! Que vous soyez fan de survie ou de créations monumentales, ce salon est fait pour partager vos mondes et trouver l’inspiration. Retouvez des joueurs avec qui partager ce moment.",
+                picture : "minecraft.jpg",
             },
         ];
 
