@@ -10,9 +10,19 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import roomRoutes from './routes/roomRoutes';
 import messageRoutes from './routes/messageRoutes';
+import { Server } from 'socket.io';
+import { createServer } from 'http';
+import { socketSetup } from './socket/socketSetup';
 
 const app: Application = express();
 const port = config.port;
+const httpServer = createServer(app);
+const io = new Server(httpServer, {
+	cors: {
+		origin: 'http://localhost:5173',
+		credentials: true, 
+	}
+});
 
 app.use(cors({
   origin: 'http://localhost:5173',
@@ -31,6 +41,8 @@ app.use('/api', userRoutes);
 app.use('/api', roomRoutes);
 app.use('/api', messageRoutes);
 
-app.listen(port, () => {
+socketSetup(io);
+
+httpServer.listen(port, () => {
   logger.info(`Server is running on port ${port}`);
 });

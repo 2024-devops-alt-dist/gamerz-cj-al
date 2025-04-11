@@ -1,5 +1,11 @@
+import { IRoom } from "./IRoom";
+import { IUser } from "./IUser";
+
 export interface IMessage  {
-	id : string;
+	_id?: string;
     content : string;
-    date_time : Date;
+    user: IUser | null;
+    room: IRoom | null;
+    createdAt?: Date,
+    updatedAt?: Date
 }
