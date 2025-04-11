@@ -3,22 +3,22 @@ import { Dropdown, Nav } from "react-bootstrap";
 import '../assets/styles/global.css';
 import '../assets/styles/sidebar.css';
 import profilIcon from '../assets/pic⁫tures/avatar1.png'
-import Room1 from '../assets/pic⁫tures/assassinsCreed.jpeg'
-import Room2 from '../assets/pic⁫tures/minecraft.jpg'
-import Room3 from '../assets/pic⁫tures/witcher3.jpg'
 import logoIcon from '../assets/pic⁫tures/loco-icon.png';
 import iconMicro from '../assets/pic⁫tures/audio.png';
 import iconMicroOff from '../assets/pic⁫tures/micro-off.png';
 import iconCamera from '../assets/pic⁫tures/camera.png';
 import iconCameraOff from '../assets/pic⁫tures/camera-off.png';
 import closeIcon from '../assets/pic⁫tures/close.png'; 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import { IRoom } from "../models/IRoom";
+import { getRooms } from "../api/services/roomService";
 
 function Sidebar() {
     const [cameraOn, setCameraOn] = useState(true);
     const [microOn, setMicroOn] = useState(true);
     const [showMenu, setShowMenu] = useState(false);
+    const [rooms, setRooms] = useState<IRoom[]>([]);
     const { logout } = useAuth();
     
     const toggleMenu = () => setShowMenu(prev => !prev);
@@ -26,9 +26,31 @@ function Sidebar() {
     const toggleCamera = () => setCameraOn(prevState => !prevState);
     const toggleMicro = () => setMicroOn(prevState => !prevState);
     
-    const handleNavClick = () => {
-        setShowMenu(false);
-    };
+    const handleNavClick = () => {setShowMenu(false);};
+
+    useEffect(() => {
+        const fetchRooms = async () => {
+            try {
+                const res = await getRooms();
+                let rooms: IRoom[] = [];
+                for(let element of res.data) {
+                    const room: IRoom = {
+                        id: element._id,
+                        name : element.name,
+                        description : element.description,
+                        picture: element.picture,
+                    } 
+                    rooms.push(room);
+                };
+                setRooms(rooms);
+                console.log(rooms);
+            } catch (error) {
+                console.error("Erreur lors du chargement des salons :", error);
+            }
+        };
+
+        fetchRooms();
+    }, []);
 
     return (
         <>
@@ -49,15 +71,11 @@ function Sidebar() {
             </Link>
 
             <Nav className="flex-column align-items-center gap-2 flex-grow-1 icon-container" onClick={handleNavClick}>
-                <Nav.Link as={Link} to="/room1" className="sidebar-icon">
-                    <img src={Room1} alt="Salon 1" />
-                </Nav.Link>
-                <Nav.Link as={Link} to="/room2" className="sidebar-icon">
-                    <img src={Room3} alt="Salon 2" />
-                </Nav.Link>
-                <Nav.Link as={Link} to="/room3" className="sidebar-icon">
-                    <img src={Room2} alt="Salon 3" />
-                </Nav.Link>
+                {rooms.map((room) => (
+                    <Nav.Link as={Link} key={room.id} to={`/room/${room.id}`} title={room.name} className="sidebar-icon">
+                        <img src={`../assets/pictures/${room.picture}`} alt={room.name} />
+                    </Nav.Link>
+                ))}
             </Nav>
         
             <div className="d-flex justify-content-between my-2 gap-2">
