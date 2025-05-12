@@ -13,6 +13,7 @@ import messageRoutes from './routes/messageRoutes';
 import { Server } from 'socket.io';
 import { createServer } from 'http';
 import { socketSetup } from './socket/socketSetup';
+import path from 'path';
 
 const app: Application = express();
 const port = config.port;
@@ -40,6 +41,7 @@ app.use('/api', authRoutes);
 app.use('/api', userRoutes);
 app.use('/api', roomRoutes);
 app.use('/api', messageRoutes);
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 socketSetup(io);
 

@@ -1,3 +1,97 @@
 .info-content {
     color: var(--color-light-gray-s);
+    background-color: #242323a6;
+    border-radius: 10px;
+    padding :  20px 30px;
 }
+
+.bg-card {
+    background-color: #181818;
+    border-radius: 10px;
+    margin: 0 45px;
+    padding: 65px;
+}
+
+.btn-admin {
+    font-size: 13px;
+    padding: 2px 0 4px 0;
+    border-radius: 10px;
+    background-color: var(--color-purple);
+    font-weight: 500;
+    width: 70px;
+}
+
+.btnIsApproved {
+    font-size: 13px;
+    padding: 2px 15px 2px 15px;
+    border-radius: 10px;
+    font-weight: 500;
+}
+
+.bg-content-messages {
+    background-color: rgba(83, 83, 83, 0.253);
+    border-radius: 10px;
+}
+
+.cust-number {
+    font-size: 65px;
+}
+
+.cust-archive-txt {
+    font-size: 15px;
+    font-style: italic;
+    text-decoration: underline;
+}
+
+.cust-marg-email {
+    margin-bottom: 10px;
+}
+
+.cust-marg-passw {
+    margin-bottom: 0;
+}
+
+.content-delete {
+    padding: 30px 45px;
+}
+
+.content-edit-password {
+    padding: 30px 45px 0 45px;
+}
+
+.content-delete h3, 
+.content-edit-password h3 {
+    font-size: 23px;
+}
+
+.btn-delete {
+    background-color: rgb(151, 10, 10);
+    color: white;
+}
+
+.btn-delete:hover {
+    background-color: rgb(119, 7, 7);
+    color: white;
+}
+
+.btn-edit {
+    background-color: rgba(78, 78, 78, 0.534);
+    color: white;
+}
+
+.btn-edit:hover {
+    background-color: var(--color-purple);
+    color: white;
+}
+
+.btn-register-edit {
+    background-color: var(--color-purple);
+    color: white;
+}
+
+.btn-register-edit:hover {
+    background-color: rgba(78, 78, 78, 0.534);
+    color: white;
+}
+
+

@@ -36,6 +36,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             
         } catch (error) {
             console.error(error);
+            throw error;
         }
     };
     

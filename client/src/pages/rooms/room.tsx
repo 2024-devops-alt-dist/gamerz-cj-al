@@ -75,19 +75,22 @@ const Room: React.FC = () => {
     
     return (
         <>
-        <div>
-            <h1>{room.name}</h1>
-            <p>Description : {room.description}</p>
+        <div className="p-4 space-mob">
+            <h1 className="mb-3 dash-title">{room.name}</h1>
+            <p className="dash-subTitle">{room.description}</p>
+        </div>
+
+        <div className="p-4 space-mob">
             <div>
-                <div>
-                    {chat.map((msg, i) => (
-                        <p key={i} style={{color: 'white'}}>
-                            <strong>{msg.user?.username}</strong>{'  '}
-                            {msg.createdAt ? msg.createdAt.toLocaleString() : ''}{'  '}
-                            {msg.content}
-                        </p>
-                    ))}
-                </div>
+                {chat.map((msg, i) => (
+                    <p key={i} style={{color: 'white'}}>
+                        <strong>{msg.user?.username}</strong>{'  '}
+                        {msg.createdAt ? msg.createdAt.toLocaleString() : ''}{'  '}
+                        {msg.content}
+                    </p>
+                ))}
+            </div>
+            <div>
                 <input
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
@@ -95,6 +98,7 @@ const Room: React.FC = () => {
                 />
                 <button onClick={sendMessage}>Envoyer</button>
             </div>
+            
         </div>
         </>
         

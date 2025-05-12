@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { createRoom, getRoomById, updateRoom, getRooms, deleteRoom } from "../controllers/roomController";
+import upload from "../middlewares/upload";
 
 
 const router: Router = Router();
@@ -108,7 +109,7 @@ router.get('/rooms/:id', getRoomById);
  *       500:
  *         description: Erreur interne du serveur
  */
-router.post('/rooms', createRoom);
+router.post('/rooms', upload.single('picture'), createRoom);
 
 /**
  * @swagger
@@ -152,7 +153,7 @@ router.post('/rooms', createRoom);
  *         description: Erreur interne du serveur
  */
 
-router.patch('/rooms/:id', updateRoom);
+router.patch('/rooms/:id', upload.single('picture'), updateRoom);
 
 /**
  * @swagger

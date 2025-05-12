@@ -24,6 +24,17 @@ const LoginForm: React.FC = () => {
     const { checkAuth } = useAuth();
     const [activeTab, setActiveTab] = useState("login");
     const navigate = useNavigate();
+    const [loginError, setLoginError] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (loginError) {
+            const timer = setTimeout(() => {
+                setLoginError(null);
+            }, 4000);
+
+            return () => clearTimeout(timer); 
+        }
+    }, [loginError]);
 
     useEffect(() => {
         if (user?.role?.includes('admin')) {
@@ -44,10 +55,12 @@ const LoginForm: React.FC = () => {
 
     const onSubmit = async (data: LoginFormInputs) => {
         try {
+            setLoginError(null);
             await login(data.email, data.password);
             await checkAuth();
-        } catch (error) {
+        } catch (error: any) {
             console.error("Erreur lors de la connexion", error);
+            setLoginError("Email ou mot de passe incorrect. Veuillez réessayer.");
         }
     };
 
@@ -93,7 +106,7 @@ const LoginForm: React.FC = () => {
                                 {errors.email && <span className="text-danger">{errors.email.message}</span>}
                             </div>
 
-                            <div className="mb-4">
+                            <div className="mb-3">
                                 <label htmlFor="password" className="form-label">Mot de passe :</label>
                                 <input
                                     type="password"
@@ -110,6 +123,12 @@ const LoginForm: React.FC = () => {
                                 </div>
                             </div>
 
+                            {loginError && (
+                                <div className="alert-danger text-center mb-3 error-alert" role="alert">
+                                    {loginError}
+                                </div>
+                            )}
+
                             <div className="text-center mb-3">
                                 <button type="submit" className="btn btn-one py-2 px-4">Se connecter</button>
                             </div>
@@ -117,11 +136,6 @@ const LoginForm: React.FC = () => {
                     )}
                     
                     {activeTab === "register" && <RegisterForm />}
-                    {/* {activeTab === "register" && (
-                        <form onSubmit={handleSubmit}>
-                            {activeTab === "register" && <RegisterForm />}
-                        </form>
-                    )} */}
                 </div>
         </div>
     </div>

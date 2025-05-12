@@ -11,14 +11,12 @@ import iconCameraOff from '../assets/pic⁫tures/camera-off.png';
 import closeIcon from '../assets/pic⁫tures/close.png'; 
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import { IRoom } from "../models/IRoom";
-import { getRooms } from "../api/services/roomService";
+import { useRoom } from "../context/RoomContext";
 
 function Sidebar() {
     const [cameraOn, setCameraOn] = useState(true);
     const [microOn, setMicroOn] = useState(true);
     const [showMenu, setShowMenu] = useState(false);
-    const [rooms, setRooms] = useState<IRoom[]>([]);
     const { logout } = useAuth();
     
     const toggleMenu = () => setShowMenu(prev => !prev);
@@ -28,29 +26,11 @@ function Sidebar() {
     
     const handleNavClick = () => {setShowMenu(false);};
 
-    useEffect(() => {
-        const fetchRooms = async () => {
-            try {
-                const res = await getRooms();
-                let rooms: IRoom[] = [];
-                for(let element of res.data) {
-                    const room: IRoom = {
-                        id: element._id,
-                        name : element.name,
-                        description : element.description,
-                        picture: element.picture,
-                    } 
-                    rooms.push(room);
-                };
-                setRooms(rooms);
-                console.log(rooms);
-            } catch (error) {
-                console.error("Erreur lors du chargement des salons :", error);
-            }
-        };
+    const { rooms, refreshRooms } = useRoom();
 
-        fetchRooms();
-    }, []);
+    useEffect(() => {
+        refreshRooms();
+    }, [rooms]);
 
     return (
         <>
@@ -72,8 +52,8 @@ function Sidebar() {
 
             <Nav className="flex-column align-items-center gap-2 flex-grow-1 icon-container" onClick={handleNavClick}>
                 {rooms.map((room) => (
-                    <Nav.Link as={Link} key={room.id} to={`/room/${room.id}`} title={room.name} className="sidebar-icon">
-                        <img src={`../assets/pictures/${room.picture}`} alt={room.name} />
+                    <Nav.Link as={Link} key={room._id} to={`/room/${room._id}`} title={room.name} className="sidebar-icon">
+                    <img src={`http://localhost:3000/uploads/${room.picture}`} alt={room.name} />
                     </Nav.Link>
                 ))}
             </Nav>

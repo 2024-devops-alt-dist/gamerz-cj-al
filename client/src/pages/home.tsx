@@ -5,7 +5,14 @@ import { useAuth } from '../context/AuthContext';
 import { IUser } from '../models/IUser';
 import Check from '../assets/pic⁫tures/check.png';
 import Close from '../assets/pic⁫tures/close.png';
-import { getUsers, updateUserApproval } from '../api/services/userService';
+import Add from '../assets/pic⁫tures/add.png';
+import { deleteUser, getUsers, updateUserApproval } from '../api/services/userService';
+import { useNavigate } from 'react-router-dom';
+import ModalConfirm from '../components/modalDeleteConfirmUser';
+import { Button } from 'react-bootstrap';
+import { IRoom } from '../models/IRoom';
+import { deleteRoom, getRooms } from '../api/services/roomService';
+import ModalConfirmRoom from '../components/modalDeleteConfirmRoom';
 
 const Home: React.FC = () => {
     const { user } = useAuth();
@@ -15,14 +22,23 @@ const Home: React.FC = () => {
     const [expandedDescriptions, setExpandedDescriptions] = useState<{ [key: string]: boolean }>({});
     const [screenWidth, setScreenWidth] = useState(window.innerWidth);
     const [settingsOpen, setSettingsOpen] = useState<{ [key: string]: boolean }>({});
+    const [userToDelete, setUserToDelete] = useState<IUser | null>(null);
+    
+    const [rooms, setRooms] = useState<IRoom[]>([]);
+    const [roomToDelete, setRoomToDelete] = useState<IRoom | null>(null);
+
+    const navigate = useNavigate();
 
     // Récupération des utilisateurs
     useEffect(() => {
-        const fetchUsers = async () => {
+        const fetchData = async () => {
             try {
                 const response = await getUsers();
                 setUsers(response.data);
-                setNotApprovedUsers(response.data.filter((u: IUser) => !u.isApproved)); // Filtrage des non approuvés
+                setNotApprovedUsers(response.data.filter((u: IUser) => !u.isApproved && !u.isBanned)); // Filtrage des non approuvés
+
+                const roomsRes = await getRooms();
+                setRooms(roomsRes.data);
             } catch (error) {
                 console.error("Erreur lors de la récupération des utilisateurs :", error);
             } finally {
@@ -30,7 +46,7 @@ const Home: React.FC = () => {
             }
         };
 
-        fetchUsers();
+        fetchData();
 
         // Gérer le redimensionnement de la fenêtre
         const handleResize = () => {
@@ -54,6 +70,12 @@ const Home: React.FC = () => {
             await updateUserApproval(userId, approved);
             // Mise à jour de l'état des utilisateurs
             setNotApprovedUsers(prevUsers => prevUsers.filter(user => user._id !== userId));
+            // Mettre à jour également tableau liste des users
+            setUsers(prevUsers => 
+                prevUsers.map(user =>
+                    user._id === userId ? { ...user, isApproved: approved } : user
+                )
+            );
         } catch (error) {
             console.error("Erreur lors de la mise à jour de l'approbation :", error);
         }
@@ -87,19 +109,56 @@ const Home: React.FC = () => {
     };
 
     // Fonction pour gérer les actions du menu "listes des users"
-    const handleMenuAction = (action: string, userId: string) => {
+    const handleMenuActionUser = (action: string, userId: string) => {
         switch (action) {
             case 'detail':
-                alert(`Afficher le détail du profil de ${userId}`);
+                navigate(`/user/${userId}`);
                 break;
             case 'delete':
-                alert(`Supprimer l'utilisateur ${userId}`);
-                break;
-            case 'modify':
-                alert(`Modifier l'utilisateur ${userId}`);
+                const selectedUser = users.find(u => u._id === userId);
+                if (selectedUser) {
+                    setUserToDelete(selectedUser);
+                }
                 break;
             default:
                 break;
+        }
+    };
+
+    const handleMenuActionRoom = (action: string, roomId: string) => {
+        switch (action) {
+            case 'detail':
+                navigate(`/details-room/${roomId}`);
+                break;
+            case 'delete':
+                const selectedRoom = rooms.find(r => r._id === roomId);
+                if (selectedRoom) {
+                    setRoomToDelete(selectedRoom); 
+                }
+                break;
+            default:
+                break;
+        }
+    };
+    
+
+    const confirmDeleteUser = async (userId: string) => {
+        try {
+            await deleteUser(userId);
+            setUsers(prevUsers => prevUsers.filter(user => user._id !== userId));
+            setUserToDelete(null);
+        } catch (error) {
+            console.error("Erreur lors de la suppression de l'utilisateur :", error);
+        }
+    };
+
+    const confirmDeleteRoom = async (roomId: string) => {
+        try {
+            await deleteRoom(roomId);
+            setRooms(prevRooms => prevRooms.filter(room => room._id !== roomId));
+            setRoomToDelete(null);
+        } catch (error) {
+            console.error("Erreur lors de la suppression du salon :", error);
         }
     };
 
@@ -175,7 +234,13 @@ const Home: React.FC = () => {
 
             {/* Tableau de tous les utilisateurs */}
             <div className="table-content custom-marge">
-                <h2 className="mb-4 dash-subTitle">Liste de vos utilisateurs :</h2>
+                <div className="d-flex justify-content-between align-items-center mb-4">
+                    <h2 className="dash-subTitle">Liste de vos utilisateurs :</h2>
+                    <Button className="btn btn-secondary btn-menu position-relative" onClick={() => navigate('/add-user')}>
+                        <img src={Add} alt="icon edit" style={{ width: '19px', height: '19px' }}/>
+                        <span className="btn-text">Ajouter</span>
+                    </Button>
+                </div>
                 <table className="table table-dark table-striped table-hover users-table">
                     <thead>
                         <tr>
@@ -212,14 +277,11 @@ const Home: React.FC = () => {
                                         </button>
                                         {settingsOpen[user._id] && (
                                             <div className="dropdown-menu show">
-                                                <button className="dropdown-item" onClick={() => handleMenuAction('detail', user._id)}>
+                                                <button className="dropdown-item" onClick={() => handleMenuActionUser('detail', user._id)}>
                                                     Profil User
                                                 </button>
-                                                <button className="dropdown-item" onClick={() => handleMenuAction('delete', user._id)}>
+                                                <button className="dropdown-item" onClick={() => handleMenuActionUser('delete', user._id)}>
                                                     Supprimer
-                                                </button>
-                                                <button className="dropdown-item" onClick={() => handleMenuAction('modify', user._id)}>
-                                                    Modifier
                                                 </button>
                                             </div>
                                         )}
@@ -230,6 +292,65 @@ const Home: React.FC = () => {
                     </tbody>
                 </table>
             </div>
+
+            {/* Tableau de tous les salons */}
+            <div className="table-content custom-marge">
+                <div className="d-flex justify-content-between align-items-center mb-4">
+                    <h2 className="dash-subTitle">Liste des salons :</h2>
+                    <Button className="btn btn-secondary btn-menu position-relative" onClick={() => navigate('/add-room')}>
+                        <img src={Add} alt="icon edit" style={{ width: '19px', height: '19px' }}/>
+                        <span className="btn-text">Ajouter</span>
+                    </Button>
+                </div>
+                {rooms.length === 0 ? (
+                    <p className="text-center text-info">Aucun salon disponible pour le moment.</p>
+                ) : (
+                    <table className="table table-dark table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th className="wide-column">Nom du salon</th>
+                                <th>Description</th>
+                                <th> </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {rooms.map(room => (
+                                <tr key={room._id}>
+                                    <td className="wide-column">{room.name}</td>
+                                    <td>{room.description}</td>
+                                    <td>
+                                        <button className="btn btn-secondary btn-sm btn-menu" onClick={() => toggleSettingsMenu(room._id)}>
+                                                ⋮
+                                        </button>
+                                        {settingsOpen[room._id] && (
+                                            <div className="dropdown-menu show">
+                                                <button className="dropdown-item" onClick={() => handleMenuActionRoom('detail', room._id)}>
+                                                    Details salon
+                                                </button>
+                                                <button className="dropdown-item"  onClick={() => handleMenuActionRoom('delete', room._id)}>
+                                                    Supprimer
+                                                </button>
+                                            </div>
+                                        )}
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                )}
+            </div>
+            
+            <ModalConfirm 
+                userToDelete={userToDelete} 
+                setUserToDelete={setUserToDelete} 
+                confirmDeleteUser={confirmDeleteUser} 
+            />
+
+            <ModalConfirmRoom 
+                roomToDelete ={roomToDelete } 
+                setRoomToDelete={setRoomToDelete} 
+                confirmDeleteRoom={confirmDeleteRoom} 
+            />
         </>
     );
 };

@@ -4,14 +4,15 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import axios from "axios";
+import { apiRegister } from "../api/services/authService";
 
 // Schéma validation Zod
 const registerSchema = z.object({
-    pseudo: z.string().min(3, "Le pseudo doit contenir au moins 3 caractères"),
+    username: z.string().min(3, "Le pseudo doit contenir au moins 3 caractères"),
     email: z.string().email("Email invalide"),
     password: z.string().min(4, "Le mot de passe doit contenir au moins 4 caractères"),
     confirmPassword: z.string(),
-    description: z.string().optional(),
+    description: z.string().min(1, "Le texte de motivation est obligatoire"),
 }).refine((data) => data.password === data.confirmPassword, {
     message: "Les mots de passe ne correspondent pas",
     path: ["confirmPassword"],
@@ -29,17 +30,18 @@ const RegisterForm: React.FC = () => {
 
     const onSubmit = async (data: RegisterFormData) => {
         try {
-            const response = await axios.post('http://localhost:3000/api/users', {
-                username: data.pseudo,
-                email: data.email,
-                password: data.password,
-                description: data.description,
-            });
+            const response = await apiRegister(
+                data.username,
+                data.email,
+                data.password,
+                data.description || ""
+            );
+    
             setMessage("Inscription réussie !");
             setIsSuccess(true);
             console.log("Inscription réussie :", response.data);
-            reset(); 
-        }  catch (error: unknown) {
+            reset();
+        } catch (error: unknown) {
             if (axios.isAxiosError(error)) {
                 const errorMsg = error.response?.data?.message || error.message;
                 setMessage("Erreur lors de l'inscription : " + errorMsg);
@@ -49,6 +51,7 @@ const RegisterForm: React.FC = () => {
             setIsSuccess(false);
         }
     };
+    
 
     return (
         <>
@@ -60,10 +63,10 @@ const RegisterForm: React.FC = () => {
                             type="text"
                             id="pseudo"
                             className="form-control"
-                            {...register("pseudo", { required: true })}
+                            {...register("username", { required: true })}
                             placeholder="Entrez votre pseudo"
                         />
-                        {errors.pseudo && <p className="text-danger">{errors.pseudo.message}</p>}
+                        {errors.username && <p className="text-danger">{errors.username.message}</p>}
                     </div>
                     <div className="col-sm-6">
                         <label htmlFor="email" className="form-label">Email :</label>
