@@ -6,6 +6,7 @@ export interface IMessage  {
     content : string;
     user: IUser | null;
     room: IRoom | null;
-    createdAt?: Date,
-    updatedAt?: Date
+    createdAt?: Date;
+    updatedAt?: Date;
+    isDeleted?: boolean;
 }

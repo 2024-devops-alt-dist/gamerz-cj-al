@@ -97,4 +97,15 @@ export const deleteMessages = async (req: Request, res: Response) => {
     } catch (error) {
         res.status(500).json({ status: 500, error: "Internal Server Error" });
     }
-}
+};
+
+export const getMessagesByRoomId = async (req: Request, res: Response) => {
+    try {
+        const { roomId } = req.params;
+        const messages = await Message.find({ room: roomId }).populate('user').populate('room');
+        res.status(200).json(messages);
+    } catch (err) {
+        res.status(500).json({ message: "Erreur lors de la récupération des messages." });
+    }
+};
+
