@@ -72,3 +72,7 @@ body {
     opacity: 50%;
     height: auto;
 }
+
+.error-alert {
+    color : rgb(197, 10, 10);
+}

@@ -96,3 +96,40 @@
         padding: 0 16px 16px 16px;
     }
 }
+
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-confirm {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 400px;
+}
+
+.btn-danger2 {
+    background-color: rgb(211, 7, 7);
+    border-color: rgb(211, 7, 7);
+    color: white;
+}
+
+.btn-danger2:hover {
+    background-color: rgb(160, 4, 4);
+    border-color: rgb(160, 4, 4);
+    color: white;
+}
+
+.wide-column {
+    width: 20%;
+}

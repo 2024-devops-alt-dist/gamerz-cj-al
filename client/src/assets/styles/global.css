@@ -2,7 +2,7 @@
     --primary-color: #181818;
     --color-light-gray-xxxs: #dbdada;
     --color-light-gray-xxs: #c7c5c5;
-    --color-light-gray-xs: rgba(255, 255, 255, 0.562);
+    --color-light-gray-xs: rgba(255, 255, 255, 0.8);
     --color-light-gray-s: rgba(255, 255, 255, 0.704);
     --color-gray-m: rgba(117, 117, 117, 0.65);
     --color-gray-l: rgba(192, 191, 191, 0.3);
@@ -26,7 +26,7 @@
 }
 .form-control::placeholder {
     opacity: 0.5;
-    color: var(--color-gray-m);
+    color: rgba(117, 117, 117);
     font-size: var(--font-size-m); 
 }
 .form-control:focus {

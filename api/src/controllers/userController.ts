@@ -68,18 +68,28 @@ export const updateUser = async (req: Request, res: Response): Promise<void> => 
 		const id: string = req.params.id;
 		const body = req.body;	
 		let user = await User.findById(id);
-		if(!user) {
+		if (!user) {
 			res.status(404).json({ status: 404, error: "Not Found" });
 			return;
 		}
-		for(let i = 0; i < body.length; i ++ ) {
+
+		for (let i = 0; i < body.length; i++) {
 			const prop = body[i].property;
-			for(const key in user) {
-				if(key === prop) {
-					user.set(key, body[i].value);
+			let value = body[i].value;
+
+			// Si la propriété est "password", on la hash
+			if (prop === "password") {
+				value = await bcrypt.hash(value, 10);
+			}
+
+			// Mise à jour de la propriété
+			for (const key in user) {
+				if (key === prop) {
+					user.set(key, value);
 				}
 			}
 		}
+
 		await user.save();
 		logger.info('User updated');
 		res.status(204).json();
@@ -87,6 +97,7 @@ export const updateUser = async (req: Request, res: Response): Promise<void> => 
 		res.status(500).json({ status: 500, error: "Internal Server Error" });        
 	}
 };
+
 
 export const deleteUser = async (req: Request, res: Response): Promise<void> => {
 	try {

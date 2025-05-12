@@ -32,23 +32,20 @@ export const getRoomById = async (req: Request, res: Response): Promise<void> =>
 };
 
 export const createRoom = async (req: Request, res: Response) => {
+	const pictureName = req.file?.filename;
+
     try {
         const room = new Room({
             name: req.body.name,
             description: req.body.description,
-			picture: req.body.picture
+			picture: pictureName
         });
 
         const createdRoom = await room.save();
 
         logger.info('Room created');
 
-        res.status(201).json({
-            id: createdRoom._id,
-            name: createdRoom.name,
-            description: createdRoom.description,
-			picture: createdRoom.picture
-        });
+        res.status(201).json(createdRoom);
     } catch (error) {
         res.status(500).json({ status: 500, error: "Internal Server Error" });
     }
@@ -57,20 +54,28 @@ export const createRoom = async (req: Request, res: Response) => {
 export const updateRoom = async (req: Request, res: Response) => {
 	try {
 		const id: string = req.params.id;
-		const body = req.body;	
+		const body = JSON.parse(req.body.updates);	
+        const pictureName = req.file?.filename;
 		let room = await Room.findById(id);
+
 		if(!room) {
 			res.status(404).json({ status: 404, error: "Room not found" });
 			return;
 		}
-		for(let i = 0; i < body.length; i ++ ) {
-			const prop = body[i].property;
-			for(const key in room) {
-				if(key === prop) {
-					room.set(key, body[i].value);
-				}
-			}
-		}
+
+		for (let i = 0; i < body.length; i++) {
+            const prop = body[i].property;
+            const value = body[i].value;
+            if (prop in room) {
+                room.set(prop, value);
+            }
+        }
+
+		// Si une nouvelle image a été uploadée, on la remplace
+        if (pictureName) {
+            room.picture = pictureName;
+        }
+
 		await room.save();
 		logger.info('Room updated');
 		res.status(200).json();
