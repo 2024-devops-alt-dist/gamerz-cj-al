@@ -7,6 +7,7 @@ export interface IMessage extends Document {
     content : string;
     user: IUser;
     room: IRoom;
+    isDeleted: boolean;
 }
 
 const messageSchema  = new Schema<IMessage>(
@@ -14,7 +15,8 @@ const messageSchema  = new Schema<IMessage>(
         id: { type: String },
         content: { type: String, required: true },
         user: {type: mongoose.Types.ObjectId, ref: "User"},
-        room: {type: mongoose.Types.ObjectId, ref: "Room"}
+        room: {type: mongoose.Types.ObjectId, ref: "Room"},
+        isDeleted: { type: Boolean, default: false },
     }, 
     { timestamps: true }
 );

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createMessages, deleteMessages, getMessages, getMessagesById, updateMessages } from "../controllers/messageController";
+import { createMessages, deleteMessages, getMessages, getMessagesById, getMessagesByRoomId, updateMessages } from "../controllers/messageController";
 
 const router: Router = Router();
 
@@ -165,5 +165,7 @@ router.patch('/messages/:id', updateMessages);
  *         description: Erreur interne du serveur
  */
 router.delete('/messages/:id', deleteMessages);
+
+router.get('/messages/room/:roomId', getMessagesByRoomId);
 
 export default router;
