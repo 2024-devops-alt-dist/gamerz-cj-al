@@ -1,10 +1,16 @@
 .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
     width: 120px;
     display: flex;
     flex-direction: column;
     align-items: center;
     background: linear-gradient(to bottom right, rgba(24, 24, 24, 0.678), #212530);
     box-shadow: 0 0 15px #212530;
+    z-index: 999;
+    transition: transform 0.3s ease-in-out; 
 }
 
 .sidebar-icon img {
@@ -75,9 +81,50 @@
     opacity: 50%;
 }
 
-@media (max-width: 700px) {
+@media (max-width: 770px) {
     .sidebar {
-        width: 80px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        transform: translateX(-120px); 
+        transition: transform 0.3s ease-in-out;
+    }
+}
+
+@media (max-width: 769px) {
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .sidebar.show-mobile {
+        transform: translateX(0); 
+        width: 100vw;
+        background: linear-gradient(to bottom right, rgba(24, 24, 24, 0.9), #212530);
+        backdrop-filter: blur(4px);
+    }
+
+    .sidebar:not(.show-mobile) {
+        transform: translateX(-100%);
+    }
+
+    .menu-icon-container {
+        display: flex;
+        justify-content: space-between;
+        padding-left: 30px;
+        padding-top: 20px;
+        width: 100%;
+        z-index: 2000;
+    }
+
+    .logo-icon2 {
+        width: 50px;
+        opacity: 50%;
+        z-index: 2001;
     }
 
     .sidebar-icon img {
@@ -85,17 +132,15 @@
         height: 50px;
     }
 
-    .logo-icon2 {
-        width: 40px;
-    }
-
     .profile-pic {
         width: 30px;
         height: 30px;
     }
 
-    .icon-micro, .icon-camera {
-        width: 20px;
-        height: 20px;
+    .close-icon {
+        width: 30px;
+        opacity: 60%;
+        padding-top: 10px;
+        margin-left: 10px;
     }
 }

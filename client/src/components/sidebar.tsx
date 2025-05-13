@@ -1,49 +1,61 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Dropdown, Nav } from "react-bootstrap";
 import '../assets/styles/global.css';
 import '../assets/styles/sidebar.css';
 import profilIcon from '../assets/pic⁫tures/avatar1.png'
-import Room1 from '../assets/pic⁫tures/assassinsCreed.jpeg'
-import Room2 from '../assets/pic⁫tures/minecraft.jpg'
-import Room3 from '../assets/pic⁫tures/witcher3.jpg'
 import logoIcon from '../assets/pic⁫tures/loco-icon.png';
 import iconMicro from '../assets/pic⁫tures/audio.png';
 import iconMicroOff from '../assets/pic⁫tures/micro-off.png';
 import iconCamera from '../assets/pic⁫tures/camera.png';
 import iconCameraOff from '../assets/pic⁫tures/camera-off.png';
-import { useState } from "react";
+import closeIcon from '../assets/pic⁫tures/close.png'; 
+import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import { useRoom } from "../context/RoomContext";
 
 function Sidebar() {
     const [cameraOn, setCameraOn] = useState(true);
     const [microOn, setMicroOn] = useState(true);
+    const [showMenu, setShowMenu] = useState(false);
     const { logout } = useAuth();
-    const navigate = useNavigate();
     
+    const toggleMenu = () => setShowMenu(prev => !prev);
+
     const toggleCamera = () => setCameraOn(prevState => !prevState);
     const toggleMicro = () => setMicroOn(prevState => !prevState);
+    
+    const handleNavClick = () => {setShowMenu(false);};
 
-    const handleLogout = async () => {
-        await logout(); 
-        navigate("/login");
-    };
+    const { rooms, refreshRooms } = useRoom();
+
+    useEffect(() => {
+        refreshRooms();
+    }, [rooms]);
 
     return (
-        <div className="sidebar bg-cust text-white p-4 d-flex flex-column vh-100" >
-            <Link to="/home" >
+        <>
+        {/* Icône du menu hamburger en dehors de la sidebar */}
+        <div className="menu-icon-container">
+            <img
+                src={showMenu ? closeIcon : logoIcon}
+                alt={showMenu ? "Fermer le menu" : "Ouvrir le menu"}
+                className={`logo-icon2 d-block d-md-none ${showMenu ? 'close-icon' : ''}`}
+                onClick={toggleMenu}
+                role="button"
+            />
+        </div>
+        
+        <div className={`sidebar bg-cust text-white p-4 d-flex flex-column vh-100 ${showMenu ? 'show-mobile' : ''}`}>
+            <Link to="/home" onClick={handleNavClick}>
                 <img src={logoIcon} alt="Logo icon" className="logo-icon2" />
             </Link>
 
-            <Nav className="flex-column align-items-center gap-2 flex-grow-1 icon-container" >
-                <Nav.Link as={Link} to="/room1" className="sidebar-icon">
-                    <img src={Room1} alt="Accueil" />
-                </Nav.Link>
-                <Nav.Link as={Link} to="/room2" className="sidebar-icon">
-                    <img src={Room3} alt="Profil" />
-                </Nav.Link>
-                <Nav.Link as={Link} to="/room3" className="sidebar-icon">
-                    <img src={Room2} alt="Paramètres" />
-                </Nav.Link>
+            <Nav className="flex-column align-items-center gap-2 flex-grow-1 icon-container" onClick={handleNavClick}>
+                {rooms.map((room) => (
+                    <Nav.Link as={Link} key={room._id} to={`/room/${room._id}`} title={room.name} className="sidebar-icon">
+                    <img src={`http://localhost:3000/uploads/${room.picture}`} alt={room.name} />
+                    </Nav.Link>
+                ))}
             </Nav>
         
             <div className="d-flex justify-content-between my-2 gap-2">
@@ -69,12 +81,14 @@ function Sidebar() {
                     </Dropdown.Toggle>
 
                     <Dropdown.Menu>
-                        <Dropdown.Item as={Link} to="/profil">Profil</Dropdown.Item>
-                        <Dropdown.Item onClick={handleLogout}>Déconnexion</Dropdown.Item>
+                        <Dropdown.Item as={Link} to="/profil" onClick={handleNavClick}>Profil</Dropdown.Item>
+                        <Dropdown.Item onClick={logout}>Déconnexion</Dropdown.Item>
                     </Dropdown.Menu>
                 </Dropdown>
             </div>
         </div>
+        </>
+        
     );
 }
 

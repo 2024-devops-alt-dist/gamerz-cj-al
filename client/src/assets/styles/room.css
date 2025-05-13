@@ -1,0 +1,77 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    overflow: hidden; 
+}
+
+.chat-room-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh; 
+}
+
+.chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding-bottom: 1rem;
+}
+
+.chat-input-container {
+    background-color: #343a40;
+    border-top: 1px solid #555;
+    border-radius: 15px;
+    padding: 10px;
+    position: sticky;
+    bottom: 0;
+    z-index: 10;
+}
+
+.message-user {
+    background-color: var(--color-purple);
+}
+
+.message-other {
+    background-color: var(--color-dark-purple-s); 
+}
+
+.message-deleted {
+    background-color: #810e19;
+}
+
+.bg-trash-cust {
+    background-color: rgba(0, 0, 0, 0.438);
+    opacity: 50%;
+}
+
+.bg-trash-cust:hover {
+    background-color: rgba(0, 0, 0, 0.438);
+    opacity: 100%;
+}
+
+.space-cust {
+    padding: 5px 5px;
+}
+
+.space-deleted {
+    padding: 2px 10px;
+    font-size: 14px;
+}
+
+/*Bar scroll personnalisation */
+.chat-messages::-webkit-scrollbar {
+    width: 10px;
+}
+
+.chat-messages::-webkit-scrollbar-track {
+    background: #31314e; 
+    border-radius: 10px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+    background: #5e32b19d; 
+    border-radius: 10px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb:hover {
+    background: #7704e2;
+}

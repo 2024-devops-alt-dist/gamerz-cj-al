@@ -9,7 +9,8 @@ interface Config {
     dbHost: string;
     dbCluster: string;
     uri: string;
-    secret: string;
+    accessSecret: string;
+    refreshSecret: string;
     port: number;
 }
 
@@ -27,8 +28,9 @@ const config: Config = {
   dbName: getEnvVar('DB_NAME'),
   dbHost: getEnvVar('DB_HOST'),
   dbCluster: getEnvVar('DB_CLUSTER'),
-  uri: `mongodb+srv://${getEnvVar('DB_USER')}:${getEnvVar('DB_PASSWORD')}@${getEnvVar('DB_HOST')}/${getEnvVar('DB_NAME')}?retryWrites=true&w=majority&appName=${getEnvVar('DB_CLUSTER')}` || 'mongodb://localhost:5000',
-  secret: getEnvVar('JWT_SECRET'),
+  uri: `mongodb+srv://${getEnvVar('DB_USER')}:${getEnvVar('DB_PASSWORD')}@${getEnvVar('DB_HOST')}/${getEnvVar('DB_NAME')}?retryWrites=true&w=majority&appName=${getEnvVar('DB_CLUSTER')}`,
+  accessSecret: getEnvVar('JWT_ACCESS_SECRET'),
+  refreshSecret: getEnvVar('JWT_REFRESH_SECRET'),
   port: process.env.PORT ? parseInt(process.env.PORT) : 3000
 };
 

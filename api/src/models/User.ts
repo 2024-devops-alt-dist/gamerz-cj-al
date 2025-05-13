@@ -1,7 +1,8 @@
 import mongoose, { Schema, Document } from 'mongoose';
+import Message from './Message';
 
 export interface IUser extends Document {
-	id?: string;
+	id: string;
     username: string;
     email: string;
 	password: string;
@@ -11,6 +12,7 @@ export interface IUser extends Document {
 	isBanned: boolean;
 	createdAt: Date;
 	updatedAt: Date;
+	refreshToken: string;
 }
 
 const userSchema = new Schema<IUser>(
@@ -23,9 +25,22 @@ const userSchema = new Schema<IUser>(
 		description: { type: String },
 		isApproved: { type: Boolean, default: false },
 		isBanned: { type: Boolean, default: false },
+		refreshToken: { type: String, default: null }
 	}, 
 	{ timestamps: true }
 );
+
+
+// 🔁 Hook post-suppression
+userSchema.post("findOneAndDelete", async function (doc) {
+	if (doc) {
+		await Message.updateMany(
+			{ user: doc._id },
+			{ $set: { content: "Utilisateur supprimé", user: null } }
+		);
+	}
+});
+
 
 const User = mongoose.model<IUser>('User', userSchema);
 

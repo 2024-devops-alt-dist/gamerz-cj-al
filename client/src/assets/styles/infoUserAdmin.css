@@ -1,0 +1,120 @@
+.btn-menu {
+    position: relative;
+    padding: 18px;
+    border-radius: 10px;
+    background-color: rgba(78, 78, 78, 0.534);
+    border: 1px solid rgba(99, 99, 99, 0.815);
+}
+
+.btn-text {
+    position: absolute;
+    top: 100%; 
+    opacity: 0;
+    transform: translateX(-50%);
+    font-size: 12px;
+    color: #ffffff;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 5px 10px;
+    border-radius: 5px;
+    transition: opacity 0.3s, visibility 0.3s;
+}
+
+.btn-menu:hover .btn-text {
+    opacity: 1;
+    visibility: visible;
+}
+
+.btn-menu:hover {
+    padding: 18px;
+    border-radius: 10px;
+    background-color: var(--color-purple);
+}
+
+.btnAdd {
+    padding: 10px 18px;
+    border-radius: 10px;
+    background-color: rgba(78, 78, 78, 0.534);
+    border: 1px solid rgba(99, 99, 99, 0.815);
+    color: white;
+}
+
+.btnAdd:hover {
+    padding: 10px 18px;
+    border-radius: 10px;
+    background-color: var(--color-purple);
+}
+
+.btn-delete {
+    border: none;
+}
+
+.statut-title, .ban-title, .description-title {
+    margin-bottom: 8px;
+}
+
+.content-statut, .content-ban {
+    margin-bottom: 15px;
+}
+
+.successMessageApproved {
+    background-color: #28a745; /* vert Bootstrap */
+    color: white;
+    padding: 10px 16px;
+    border-radius: 8px;
+    display: inline-block; /* pour que le bloc prenne juste la largeur du contenu */
+    font-weight: 500;
+    margin-bottom: 15px;
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn-success {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    padding: 9px;
+    border-radius: 10px;
+    background-color: green;
+    border: 1px solid green;
+}
+
+.btn-success:hover {
+    border-radius: 10px;
+    background-color: rgb(0, 114, 0);
+}
+
+.btn-disable {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    padding: 9px;
+    border-radius: 10px;
+    background-color: rgba(78, 78, 78, 0.534);
+    border: 1px solid rgba(99, 99, 99, 0.815);
+}
+
+.btn-danger {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    padding: 9px;
+    border-radius: 10px;
+}
+
+.btn-disable:hover {
+    /* padding: 12px; */
+    border-radius: 10px;
+    background-color: rgba(99, 99, 99, 0.815);
+    border: 1px solid rgba(99, 99, 99, 0.815);
+}
