@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { getRoomById } from '../../api/services/roomService';
 import { IRoom } from '../../models/IRoom';
 import { useParams } from 'react-router-dom';
@@ -21,6 +21,8 @@ const Room: React.FC = () => {
     const [message, setMessage] = useState('');
     const [chat, setChat] = useState<IMessage[]>([]);
 
+    const messagesEndRef = useRef<HTMLDivElement | null>(null);
+
     useEffect(() => {
         fetchRoom();
     }, [id]);
@@ -39,6 +41,12 @@ const Room: React.FC = () => {
             socket.off('receive_message');
         };
     }, [room])
+
+    useEffect(() => {
+    if (messagesEndRef.current) {
+        messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+}, [chat]);
 
     const fetchRoom = async () => {
         try {
@@ -99,84 +107,87 @@ const Room: React.FC = () => {
     
     return (
         <>
-        <div className="p-4 space-mob">
-            <h1 className="mb-3 dash-title">{room.name}</h1>
-            <p className="dash-subTitle">{room.description}</p>
-        </div>
+        <div className="chat-room-container d-flex flex-column">
+            <div className="p-4 space-mob">
+                <h1 className="mb-3 dash-title">{room.name}</h1>
+                <p className="dash-subTitle">{room.description}</p>
+            </div>
 
-        <div className="chat-messages p-4">
-            {chat.map((msg, i) => {
-                const isCurrentUser = msg.user && user && msg.user._id === user._id;
-                let customClass = '';
-                if (!msg.user) {
-                    customClass = 'message-deleted';
-                } else if (isCurrentUser) {
-                    customClass = 'message-user';
-                } else {
-                    customClass = 'message-other';
-                }
+            <div className="chat-messages p-4 mb-4">
+                {chat.map((msg, i) => {
+                    const isCurrentUser = msg.user && user && msg.user._id === user._id;
+                    let customClass = '';
+                    if (!msg.user) {
+                        customClass = 'message-deleted';
+                    } else if (isCurrentUser) {
+                        customClass = 'message-user';
+                    } else {
+                        customClass = 'message-other';
+                    }
 
-                const contentClass = msg.user ? 'space-cust' : 'space-deleted';
+                    const contentClass = msg.user ? 'space-cust' : 'space-deleted';
 
-                return (
-                    <div key={i} className={`mb-2 d-flex ${isCurrentUser ? 'justify-content-end' : 'justify-content-start'}`}>
-                        <div className={`text-white d-flex align-items-start p-2 rounded ${customClass}`} style={{ maxWidth: '70%' }}>
-                            <div className={contentClass}>
-                                {msg.isDeleted ? (
-                                    <div className="fst-italic dash-title delete-user-mess">
-                                        {msg.user ? (
-                                            <span>{msg.user.username} a supprimé ce message</span>
-                                        ) : (
-                                            <span>Message indisponible – utilisateur supprimé</span>
-                                        )}
-                                    </div>
-                                ) : msg.user ? (
-                                    <>
-                                        <div className="d-flex justify-content-between align-items-center">
-                                            <strong>{msg.user.username}</strong>
-                                            <span className="small ms-5">
-                                                {msg.createdAt
-                                                ? new Date(msg.createdAt).toLocaleString('fr-FR', {
-                                                    day: '2-digit',
-                                                    month: '2-digit',
-                                                    year: 'numeric',
-                                                    hour: '2-digit',
-                                                    minute: '2-digit'
-                                                })
-                                                : ''}
-                                            </span>
+                    return (
+                        <div key={i} className={`mb-2 d-flex ${isCurrentUser ? 'justify-content-end' : 'justify-content-start'}`}>
+                            <div className={`text-white d-flex align-items-start p-2 rounded ${customClass}`} style={{ maxWidth: '70%' }}>
+                                <div className={contentClass}>
+                                    {msg.isDeleted ? (
+                                        <div className="fst-italic dash-title delete-user-mess">
+                                            {msg.user ? (
+                                                <span>{msg.user.username} a supprimé ce message</span>
+                                            ) : (
+                                                <span>Message indisponible – utilisateur supprimé</span>
+                                            )}
                                         </div>
-                                        <div>{msg.content}</div>
-                                    </>
-                                ) : (
-                                    <div className="fst-italic dash-title delete-user-mess">
-                                        Message indisponible – utilisateur supprimé
-                                    </div>
+                                    ) : msg.user ? (
+                                        <>
+                                            <div className="d-flex justify-content-between align-items-center">
+                                                <strong>{msg.user.username}</strong>
+                                                <span className="small ms-5">
+                                                    {msg.createdAt
+                                                    ? new Date(msg.createdAt).toLocaleString('fr-FR', {
+                                                        day: '2-digit',
+                                                        month: '2-digit',
+                                                        year: 'numeric',
+                                                        hour: '2-digit',
+                                                        minute: '2-digit'
+                                                    })
+                                                    : ''}
+                                                </span>
+                                            </div>
+                                            <div>{msg.content}</div>
+                                        </>
+                                    ) : (
+                                        <div className="fst-italic dash-title delete-user-mess">
+                                            Message indisponible – utilisateur supprimé
+                                        </div>
+                                    )}
+                                </div>
+
+                                {!msg.isDeleted && msg.user && user && msg.user._id === user._id && msg._id && (
+                                    <Button className="d-flex justify-content-center align-items-center bg-trash-cust border-0 ms-2" style={{ width: '30px', height: '30px' }} onClick={() => handleDeleteMessage(msg._id!)}>
+                                        <img src={Delete} alt="icon delete" style={{ width: '15px', height: '15px' }} />
+                                    </Button>
                                 )}
                             </div>
-
-                            {!msg.isDeleted && msg.user && user && msg.user._id === user._id && msg._id && (
-                                <Button className="d-flex justify-content-center align-items-center bg-trash-cust border-0 ms-2" style={{ width: '30px', height: '30px' }} onClick={() => handleDeleteMessage(msg._id!)}>
-                                    <img src={Delete} alt="icon delete" style={{ width: '15px', height: '15px' }} />
-                                </Button>
-                            )}
                         </div>
-                    </div>
-                );
-            })}
-        </div>
+                    );
+                })}
+                <div ref={messagesEndRef} />
+            </div>
 
-        <div className="chat-input-container d-flex align-items-center">
-            <input
-                type="text"
-                className="form-control me-2"
-                placeholder="Message..."
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-            />
-            <button className="btn btn-primary" onClick={sendMessage}>
-                Envoyer
-            </button>
+            <div className="chat-input-container d-flex align-items-center px-3 mb-1">
+                <input
+                    type="text"
+                    className="form-control me-2"
+                    placeholder="Message..."
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                />
+                <button className="btn btn-primary" onClick={sendMessage}>
+                    Envoyer
+                </button>
+            </div>
         </div>
         </>
         

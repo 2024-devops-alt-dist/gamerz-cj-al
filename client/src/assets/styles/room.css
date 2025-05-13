@@ -1,11 +1,19 @@
-.chat-room-container {
+html, body {
+    height: 100%;
+    margin: 0;
+    overflow: hidden; 
+}
 
-    background-color: #0e0ee9;
+.chat-room-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh; 
 }
 
 .chat-messages {
     flex: 1;
     overflow-y: auto;
+    padding-bottom: 1rem;
 }
 
 .chat-input-container {
@@ -13,6 +21,9 @@
     border-top: 1px solid #555;
     border-radius: 15px;
     padding: 10px;
+    position: sticky;
+    bottom: 0;
+    z-index: 10;
 }
 
 .message-user {
@@ -44,5 +55,23 @@
 .space-deleted {
     padding: 2px 10px;
     font-size: 14px;
+}
 
+/*Bar scroll personnalisation */
+.chat-messages::-webkit-scrollbar {
+    width: 10px;
+}
+
+.chat-messages::-webkit-scrollbar-track {
+    background: #31314e; 
+    border-radius: 10px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+    background: #5e32b19d; 
+    border-radius: 10px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb:hover {
+    background: #7704e2;
 }
