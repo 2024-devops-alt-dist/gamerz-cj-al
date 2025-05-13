@@ -31,6 +31,10 @@
 .bg-content-messages {
     background-color: rgba(83, 83, 83, 0.253);
     border-radius: 10px;
+    min-height: 260px; 
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .cust-number {
