@@ -14,6 +14,7 @@ const profileSchema = z.object({
     username: z.string().min(3, 'Nom trop court'),
     email: z.string().email('Email invalide'),
     confirmEmail: z.string().email('Email invalide'),
+    description: z.string().min(5, 'Description trop courte').max(500, 'Description trop longue'),
 }).refine((data) => data.email === data.confirmEmail, {
     message: "Les e-mails ne correspondent pas",
     path: ["confirmEmail"],
@@ -39,6 +40,7 @@ const Profil: React.FC = () => {
             username: user?.username || '',
             email: user?.email || '',
             confirmEmail: user?.email || '',
+            description: user?.description || '',
         },
     });
     
@@ -57,6 +59,7 @@ const Profil: React.FC = () => {
             await updateUserInfo(user._id, [
                 { property: "username", value: data.username },
                 { property: "email", value: data.email },
+                { property: "description", value: data.description },
             ]);
             await checkAuth();
             setEditMode(false);
@@ -92,41 +95,46 @@ const Profil: React.FC = () => {
             </div>
 
             <div className="bg-card">
-                <div className="d-flex justify-content-between flex-wrap">
-                    <div className="flex-grow-1 me-5">
-                        <div className="d-flex align-items-center gap-4">
-                        <img src={profilIcon} alt="Profile" className="img-fluid rounded-circle" style={{ width: '180px', height: '180px' }} />
-                        <div>
-                            <h2 className="text-white">{user.username}</h2>
-                            <div className="d-flex dash-title">
-                            {isAdmin && (
-                                <p className="mb-0 btn-admin text-center me-2">admin</p>
-                            )}
-                            {user.isApproved ? (
-                                <span className="btnIsApproved bg-success">Approuvé</span>
-                            ) : (
-                                <span className="btnIsApproved bg-warning">En attente</span>
-                            )}
+                <div className="row gx-4">
+                    <div className="col-12 col-md-8">
+                        <div className="d-flex align-items-center gap-4 flex-wrap">
+                            <img src={profilIcon} alt="Profile" className="img-fluid rounded-circle" style={{ width: '170px', height: '170px' }} />
+                            <div>
+                                <h2 className="text-white">{user.username}</h2>
+                                <div className="d-flex dash-title">
+                                    {isAdmin && (
+                                        <p className="mb-0 btn-admin text-center me-2">admin</p>
+                                    )}
+                                    {user.isApproved ? (
+                                        <span className="btnIsApproved bg-success">Approuvé</span>
+                                    ) : (
+                                        <span className="btnIsApproved btn-delete">Refusé</span>
+                                    )}
+                                </div>
                             </div>
-                        </div>
                         </div>
 
                         <div className="info-content text-white mt-4">
-                        <p className="cust-marg-email">Email : {user.email}</p>
-                        <p className="cust-marg-passw">Password : ***********</p>
+                            <p className="cust-marg-email">Email : {user.email}</p>
+                            <p className="cust-marg-passw">Password : ***********</p>
+                            {user.isBanned && (
+                                <p className="mb-0 text-danger">⚠ Utilisateur banni</p>
+                            )}
+                        </div>
 
-                        {user.isBanned && (
-                            <p className="mb-0 text-danger">⚠ Utilisateur banni</p>
-                        )}
+                        <div className="info-content text-white mt-4">
+                            <p className="cust-marg-desc">Description : {user.description || "Aucune description"}</p>
                         </div>
                     </div>
 
-                    <div className="dash-title text-center bg-content-messages p-5 d-flex flex-column align-items-center">
-                        <div>
-                        <h2>Messages en attente</h2>
-                        <p className="cust-number">0</p>
+                    <div className="col-12 col-md-4">
+                        <div className="dash-title text-center bg-content-messages p-4 d-flex flex-column align-items-center h-100">
+                            <div>
+                                <h2>Messages en attente</h2>
+                                <p className="cust-number">0</p>
+                            </div>
+                            <p className="cust-archive-txt mt-auto">Afficher l'historique de mes messages</p>
                         </div>
-                        <p className="cust-archive-txt mt-auto">Afficher l'historique de mes messages</p>
                     </div>
                 </div>
             </div>
@@ -135,7 +143,7 @@ const Profil: React.FC = () => {
                 <>
                     <div className="content-edit-password text-white">
                         <h3>Gestion Profil</h3>
-                        <p className="dash-title">Modifier votre profil ici (email, pseudo, etc...)</p>
+                        <p className="dash-title">Modifier votre profil ici (email, pseudo, description, mot de passe, etc...)</p>
 
                         {editMode ? (
                             <form onSubmit={handleSubmit(onSubmit)} className="mb-3">
@@ -147,6 +155,14 @@ const Profil: React.FC = () => {
 
                                 <input {...register("confirmEmail")} className="form-control mb-2" placeholder="Vérification Email" />
                                 {errors.confirmEmail && <p className="text-danger">{errors.confirmEmail.message}</p>}
+
+                                <textarea
+                                    {...register("description")}
+                                    className="form-control mb-2"
+                                    placeholder="Votre description"
+                                    rows={4}
+                                />
+                                {errors.description && <p className="text-danger">{errors.description.message}</p>}
 
                                 <div className="d-flex">
                                     <button type="submit" className="btn btn-register-edit me-2">Enregistrer</button>
