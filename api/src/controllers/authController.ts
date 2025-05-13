@@ -77,8 +77,8 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 
 export const logout = async (req: Request, res: Response): Promise<void> => {
     res.status(200)
-        .clearCookie('access_token', { httpOnly: true, sameSite: 'strict', path: '/' })
-        .clearCookie('refresh_token', { httpOnly: true, sameSite: 'strict', path: '/' })
+        .clearCookie('access_token', { httpOnly: true, sameSite: 'none', path: '/' })
+        .clearCookie('refresh_token', { httpOnly: true, sameSite: 'none', path: '/' })
         .json({ message: 'Logout successful' });
 };
 

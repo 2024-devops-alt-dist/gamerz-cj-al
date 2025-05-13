@@ -11,7 +11,9 @@ import iconCameraOff from '../assets/pic⁫tures/camera-off.png';
 import closeIcon from '../assets/pic⁫tures/close.png'; 
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import { useRoom } from "../context/RoomContext";
+import { IRoom } from "../models/IRoom";
+import { getRooms } from "../api/services/roomService";
+// import { useRoom } from "../context/RoomContext";
 
 function Sidebar() {
     const [cameraOn, setCameraOn] = useState(true);
@@ -26,13 +28,21 @@ function Sidebar() {
     
     const handleNavClick = () => {setShowMenu(false);};
 
-    const { rooms, refreshRooms } = useRoom();
+    // const { rooms, refreshRooms } = useRoom();
+    const [rooms, setRooms] = useState<IRoom[]>([]);
 
     const serverUrl = import.meta.env.VITE_API_URL;
 
     useEffect(() => {
-        refreshRooms();
-    }, [rooms]);
+        // refreshRooms();
+        const fetchDataRooms = async () => {
+            const response = await getRooms();
+            setRooms(response.data);
+        };
+        fetchDataRooms();
+    }, []);
+
+    
 
     return (
         <>

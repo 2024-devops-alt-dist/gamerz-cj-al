@@ -14,16 +14,16 @@ import AddUser from "./pages/AddUser";
 import AddRoom from "./pages/addRoom";
 import DetailsRoom from "./pages/detailsRoom";
 import EditRoom from "./pages/editRoom";
-import { RoomProvider } from "./context/RoomContext";
+// import { RoomProvider } from "./context/RoomContext";
 
 function App() {
   return (
     <>
       <Router>
         <AuthProvider>
-          <RoomProvider>
+          {/* <RoomProvider> */}
             <MainContent />
-          </RoomProvider>
+          {/* </RoomProvider> */}
         </AuthProvider>
       </Router>
     </>
