@@ -10,7 +10,8 @@ import { deleteMessage, getMessagesByRoomId } from '../../api/services/messageSe
 import { Button } from 'react-bootstrap';
 import Delete from '../../assets/pic⁫tures/delete.png';
 
-const socket = io('http://localhost:3000');
+const serverUrl = import.meta.env.VITE_API_URL;
+const socket = io(serverUrl);
 
 const Room: React.FC = () => {
     

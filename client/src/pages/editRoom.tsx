@@ -21,6 +21,7 @@ const EditRoom: React.FC = () => {
     const [file, setFile] = useState<File | null>(null);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const navigate = useNavigate();
+    const serverUrl = import.meta.env.VITE_API_URL;
 
     const {
         register,
@@ -116,7 +117,7 @@ const EditRoom: React.FC = () => {
                         />
                     ) : room.picture ? (
                         <img
-                            src={`http://localhost:3000/uploads/${room.picture}`}
+                            src={`${serverUrl}/uploads/${room.picture}`}
                             alt="Image du salon"
                             className="img-fluid rounded mb-2"
                             style={{ maxHeight: "300px", objectFit: "cover" }}

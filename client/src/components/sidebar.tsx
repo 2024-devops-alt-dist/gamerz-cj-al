@@ -28,6 +28,8 @@ function Sidebar() {
 
     const { rooms, refreshRooms } = useRoom();
 
+    const serverUrl = import.meta.env.VITE_API_URL;
+
     useEffect(() => {
         refreshRooms();
     }, [rooms]);
@@ -53,7 +55,7 @@ function Sidebar() {
             <Nav className="flex-column align-items-center gap-2 flex-grow-1 icon-container" onClick={handleNavClick}>
                 {rooms.map((room) => (
                     <Nav.Link as={Link} key={room._id} to={`/room/${room._id}`} title={room.name} className="sidebar-icon">
-                    <img src={`http://localhost:3000/uploads/${room.picture}`} alt={room.name} />
+                    <img src={`${serverUrl}/uploads/${room.picture}`} alt={room.name} />
                     </Nav.Link>
                 ))}
             </Nav>

@@ -30,15 +30,13 @@ export const login = async (req: Request, res: Response): Promise<void> => {
             .cookie("access_token", accessToken, {
                 httpOnly: true,
                 secure: true,
-                sameSite: "strict", 
-                // sameSite: "none"
+                sameSite: "none",
                 maxAge: 60 * 60 * 1000
             })
             .cookie("refresh_token", refreshToken, {
                 httpOnly: true,
                 secure: true,
-                sameSite: "strict",
-                // sameSite: "none"
+                sameSite: "none",
                 maxAge: 7 * 24 * 60 * 60 * 1000
             })
             .json({ status: 200, message: "Authenticated" });

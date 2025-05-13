@@ -61,3 +61,5 @@ npm run dev
 ```
 
 L'application sera accessible à l'adresse : http://localhost:5173/
+
+L'application est accessible en ligne à l'adresse suivante : https://gamerz-cj-al-front.onrender.com/
