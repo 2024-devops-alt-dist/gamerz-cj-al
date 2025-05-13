@@ -91,7 +91,7 @@ const Room: React.FC = () => {
 
     const handleDeleteMessage = async (messageId: string) => {
         try {
-            const res = await deleteMessage(messageId);
+            await deleteMessage(messageId);
             // on marque localement le message comme supprimé
             setChat(prev =>
             prev.map(msg =>
