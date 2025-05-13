@@ -3,6 +3,8 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
+import { addUser } from "../api/services/userService";
+import { IUser } from "../models/IUser";
 
 // Schéma de validation Zod
 const userSchema = z.object({
@@ -40,7 +42,7 @@ const AddUser: React.FC = () => {
     
     const onSubmit = async (data: UserFormData) => {
         try {
-            const response = await axios.post('http://localhost:3000/api/users', {
+            const newUser: IUser = {
                 username: data.username,
                 email: data.email,
                 password: data.password,
@@ -48,9 +50,8 @@ const AddUser: React.FC = () => {
                 role: data.role, 
                 isApproved: true,
                 isBanned: false,
-            }, {
-                withCredentials: true,
-            });
+            }
+            const response = await addUser(newUser);
 
             setMessage("Utilisateur ajouté avec succès !");
             setIsSuccess(true);

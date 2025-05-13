@@ -3,6 +3,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import axios from "axios";
+import { addRoom } from "../api/services/roomService";
 
 const roomSchema = z.object({
     name: z.string().min(3, "Le nom du salon doit comporter au moins 3 caractères."),
@@ -46,13 +47,8 @@ const AddRoom: React.FC<AddRoomProps> = ({ refreshRooms }) => {
             formData.append('name', data.name);
             formData.append('description', data.description);
             formData.append('picture', data.picture);
-    
-            const response = await axios.post('http://localhost:3000/api/rooms', formData, {
-                withCredentials: true,
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            });
+            
+            const response = await addRoom(formData);
     
             setMessage("Salon ajouté avec succès !");
             setIsSuccess(true);

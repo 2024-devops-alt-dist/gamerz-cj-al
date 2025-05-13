@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { getRoomById } from "../api/services/roomService";
+import { getRoomById, updateRoom } from "../api/services/roomService";
 import { IRoom } from "../models/IRoom";
 import { Button, Form } from "react-bootstrap";
 import { useForm } from "react-hook-form";
@@ -67,12 +67,9 @@ const EditRoom: React.FC = () => {
         }
     
         try {
-            const res = await fetch(`http://localhost:3000/api/rooms/${id}`, {
-                method: "PATCH",
-                body: formData,
-            });
-    
-            if (!res.ok) throw new Error("Échec de la mise à jour");
+            const res = await updateRoom(id, formData);
+            
+            if (res.status !== 200) throw new Error("Échec de la mise à jour");
     
             navigate(`/details-room/${id}`);
         } catch (error) {
